@@ -9,8 +9,6 @@ export const buildActions = (dispatch: any) => {
     setFilter: async (payload: FilterProps, page = 1) => {
       const dbItems = await getFilteredTickets(payload, page);
 
-      console.log(dbItems);
-
       dispatch({
         type: actions.SET_TOTAL_PAGE,
         payload: dbItems.pages,

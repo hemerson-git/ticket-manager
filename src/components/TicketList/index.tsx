@@ -156,7 +156,7 @@ export function TicketList() {
     };
 
     await (window as any).ticket.saveTicket(newTicket);
-    actions.setTickets(state.page);
+    actions.setFilter(state.filter, state.page);
   }
 
   useEffect(() => {
