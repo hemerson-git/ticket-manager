@@ -169,7 +169,7 @@ export function Menu() {
   }
 
   function handleRefreshTickets() {
-    actions.refreshTickets();
+    actions.setFilter(state.filter, state.page);
     setIsToastOpen(true);
   }
 

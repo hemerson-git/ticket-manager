@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.10.3
+
+### Patch Changes
+
+- fix: refresh page keeps filters
+
 ## 1.10.2
 
 ### Patch Changes

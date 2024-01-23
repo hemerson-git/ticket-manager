@@ -30,7 +30,7 @@ export const globalState = {
     recipient: "",
     type: "all",
     document_number: "",
-    is_online: false,
+    is_online: undefined,
   } as FilterProps,
   page: 1,
   totalPages: 1,

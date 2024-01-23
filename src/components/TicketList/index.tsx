@@ -72,7 +72,7 @@ export function TicketList() {
 
   async function confirmTicketDelete() {
     await (window as any).ticket.deleteTicket(deleteModalData);
-    actions.setTickets(state.page);
+    actions.setFilter(state.filter, state.page);
   }
 
   async function handleTogglePayment(ticket: TicketProps & { userId: string }) {
