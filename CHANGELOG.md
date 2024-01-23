@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.10.2
+
+### Patch Changes
+
+- fix: duplicate ticket now keeps the filter
+
 ## 1.10.1
 
 ### Patch Changes
