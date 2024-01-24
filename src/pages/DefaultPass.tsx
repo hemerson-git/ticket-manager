@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "../components/Input";
 import { Eye, EyeClosed } from "phosphor-react";
 import { Button } from "../components/Button";
@@ -34,6 +34,17 @@ export function DefaultPass() {
     resolver: zodResolver(passSchema),
   });
 
+  const handleSignIn = useCallback(async () => {
+    const resp = await (window as any).config.comparePass(pass);
+
+    if (resp) {
+      navigate("/sign-in");
+      return;
+    }
+
+    alert("Senha Inválida");
+  }, [pass, navigate]);
+
   useEffect(() => {
     function keyVerify(e: KeyboardEvent) {
       if (
@@ -46,7 +57,7 @@ export function DefaultPass() {
     addEventListener("keydown", keyVerify);
 
     return () => removeEventListener("keydown", keyVerify);
-  }, [pass]);
+  }, [pass, handleSignIn]);
 
   useEffect(() => {
     (async () => {
@@ -54,17 +65,6 @@ export function DefaultPass() {
       setHasPass(hasDefaultPass);
     })();
   }, []);
-
-  async function handleSignIn() {
-    const resp = await (window as any).config.comparePass(pass);
-
-    if (resp) {
-      navigate("/sign-in");
-      return;
-    }
-
-    alert("Senha Inválida");
-  }
 
   async function onSubmit(formValues: FieldValues) {
     const hasSuccess = await (window as any).config.setDefaultPass(

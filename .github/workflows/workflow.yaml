@@ -1,0 +1,19 @@
+name: Continuos Integration
+
+on: deployment
+
+jobs:
+  continuos-integration:
+    runs-on: windows
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Using node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.
+      - name: run install, build, pack and test
+        run: |
+          npm install
+          npm run build
+          npm run pack:win

@@ -85,7 +85,7 @@ async function getFilteredTickets(
 ) {
   const resultObj = {} as FilterProps;
 
-  for (let item in filter) {
+  for (const item in filter) {
     const excludedItemTypes = ["type"];
 
     if (
