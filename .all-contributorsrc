@@ -1,4 +1,5 @@
 {
   "projectName": "Ticket-Manager",
-  "projectOwner": "Hemerson Dev"
+  "projectOwner": "Hemerson Dev",
+  "files": ["CONTRIBUTORS.md"]
 }
