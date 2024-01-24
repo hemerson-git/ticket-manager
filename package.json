@@ -47,7 +47,7 @@
       "allowToChangeInstallationDirectory": "true"
     },
     "directories": {
-      "output": "releases",
+      "output": "releases/ticket_manager_${version}",
       "buildResources": "private"
     }
   },
