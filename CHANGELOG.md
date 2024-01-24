@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.10.4
+
+### Patch Changes
+
+- fix: paid filter is now working again
+
 ## 1.10.3
 
 ### Patch Changes
