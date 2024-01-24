@@ -45,8 +45,6 @@ export function TicketList() {
   const { state: userState } = useUserContext();
   const TOTAL_PAGES = Array(state.totalPages ?? 1).fill("");
 
-  console.log("TOTAL_PAGES: " + state.totalPages);
-
   const [editModalData, setEditModalData] = useState<TicketProps | null>(null);
   const [deleteModalData, setDeleteModalData] = useState<TicketProps | null>(
     null

@@ -169,8 +169,6 @@ const filterTicketHandler = async (event, data) => {
     size: z.number().positive().optional(),
   });
 
-  // const {} = z.parse(data);
-
   try {
     const tickets = await prisma.ticket.findMany({
       orderBy: [
@@ -183,7 +181,7 @@ const filterTicketHandler = async (event, data) => {
       ],
 
       take: data.size || 100,
-      skip: (data.page ?? 0) * (data.size || 100),
+      skip: (data.page - 1 || 0) * (data.size || 100),
 
       where: {
         is_paid: {
