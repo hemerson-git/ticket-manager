@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.11.0
+
+### Minor Changes
+
+- feat: add total sum of online and printed tickets
+
 ## 1.10.4
 
 ### Patch Changes
