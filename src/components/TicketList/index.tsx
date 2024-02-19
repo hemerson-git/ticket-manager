@@ -114,7 +114,7 @@ export function TicketList() {
 
     await (window as any).ticket.editTicket(newTicket);
 
-    actions.refreshTickets();
+    actions.setFilter(state.filter, state.page);
   }
 
   async function handleChangePlace(

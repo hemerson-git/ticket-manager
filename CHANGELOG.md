@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.11.1
+
+### Patch Changes
+
+- Fix: keep filter after updating the online option
+
 ## 1.11.0
 
 ### Minor Changes
