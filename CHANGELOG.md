@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.3
+
+### Patch Changes
+
+- fix(Toast): dark background with blur and low opacity (bg-zinc-900/60 backdrop-blur-sm) to match app visual style
+
 ## 1.15.2
 
 ### Patch Changes
