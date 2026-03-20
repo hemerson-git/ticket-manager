@@ -1,5 +1,5 @@
 import * as ToastPrimitive from "@radix-ui/react-toast";
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { X } from "phosphor-react";
 
 type Props = {
