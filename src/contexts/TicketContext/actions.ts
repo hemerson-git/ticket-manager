@@ -1,13 +1,15 @@
-export type ActionProps = typeof actions;
+export type FilterProps = {
+  recipient: string;
+  type: "all" | "paid" | "unpaid";
+  expiry_date?: Date;
+  limite_expire_date?: Date;
+  document_number?: string;
+  is_online?: boolean;
+};
 
-export const actions = {
-  TICKETS: "TICKETS",
-  IS_LOADING: "IS_LOADING",
-  SET_FILTER: "SET_FILTER",
-  GET_TICKETS: "GET_TICKETS",
-  SET_TICKETS: "SET_TICKETS",
-  REFRESH_TICKETS: "REFRESH_TICKETS",
-  SET_PAGE: "SET_PAGE",
-  SET_TOTAL_PAGE: "SET_TOTAL_PAGE",
-  CLEAR_FILTER: "CLEAR_FILTER",
+export const defaultFilter: FilterProps = {
+  recipient: "",
+  type: "all",
+  document_number: "",
+  is_online: undefined,
 };

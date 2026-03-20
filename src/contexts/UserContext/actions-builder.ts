@@ -21,7 +21,7 @@ export const buildActions = (dispatch: any) => {
 };
 
 async function handleSignIn() {
-  const dbUser = await (window as any).user.signIn();
+  const dbUser = await window.USER.SIGN_IN();
   localStorage.setItem("@ticket_manager_user", JSON.stringify(dbUser));
   return dbUser;
 }

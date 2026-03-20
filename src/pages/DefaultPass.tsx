@@ -35,7 +35,7 @@ export function DefaultPass() {
   });
 
   const handleSignIn = useCallback(async () => {
-    const resp = await (window as any).config.comparePass(pass);
+    const resp = await window.CONFIGS.COMPARE_PASS(pass);
 
     if (resp) {
       navigate("/home");
@@ -61,15 +61,13 @@ export function DefaultPass() {
 
   useEffect(() => {
     (async () => {
-      const hasDefaultPass = await (window as any).config.hasDefaultPass();
+      const hasDefaultPass = await window.CONFIGS.HAS_DEFAULT_PASS();
       setHasPass(hasDefaultPass);
     })();
   }, []);
 
   async function onSubmit(formValues: FieldValues) {
-    const hasSuccess = await (window as any).config.setDefaultPass(
-      formValues.defaultPass
-    );
+    const hasSuccess = await window.CONFIGS.SET_DEFAULT_PASS(formValues.defaultPass);
 
     if (hasSuccess) {
       return setHasPass(true);

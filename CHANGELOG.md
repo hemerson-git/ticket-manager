@@ -1,5 +1,52 @@
 # ticket-manager
 
+## 1.14.3
+
+### Patch Changes
+
+- refactor(TicketTable): replace raw input elements with Input component
+
+## 1.14.2
+
+### Patch Changes
+
+- refactor(Filter): replace raw input elements with Input component
+
+## 1.14.1
+
+### Patch Changes
+
+- refactor(Input): adopt reference project pattern — label stacked above input, border-b-2 border-purple-500 style, focus:outline-0, make id and name optional; FormEditTicket checkboxes now use Input component
+
+## 1.14.0
+
+### Minor Changes
+
+- feat(TicketTable): extract table logic from TicketList into dedicated TicketTable component; TicketList is now only responsible for layout, pagination, empty state, and total price
+
+## 1.13.0
+
+### Minor Changes
+
+- feat(Table): add compound Table component (wrapper, td, row, button) and apply it to TicketList replacing raw table elements with consistent styling and alternating row stripes
+
+## 1.12.1
+
+### Patch Changes
+
+- fix(Button): rename `type` to `variant` to avoid collision with native HTML button `type` attribute, add `forwardRef` for Radix `asChild` compatibility, extend `ButtonHTMLAttributes` for full type safety, remove unnecessary `Slottable` wrapper
+- fix(FormNewTicket, FormEditTicket): align submitted data object fields to `EditedTicket` interface (snake_case: `document_number`, `value`, `payment_place`, `is_paid`, `is_online`, `expiry_date`) to match handler expectations; convert `expiry_date` string to `Date` before submission
+- fix(saveTicketHandler): destructure `userId` instead of `user_id` to match `EditedTicket` interface; convert `expiry_date` with `new Date()` before passing to Prisma, consistent with `editTicketHandler`
+- refactor(DeleteTicketAlert, TicketList): replace shared inline AlertModal + AlertDialog.Root delete pattern in TicketList with per-row DeleteTicketAlert component; DeleteTicketAlert now uses `useTickets` hook and accepts `ticketId` prop instead of full ticket object1
+- refactor(electron): introduce IPC channel interface files for all namespaces (ticket, user, database, configs, page); `main.cjs` and `preload.cjs` now use interface constants instead of raw strings; preload exposes typed namespaces (`TICKET`, `USER`, `DATABASE`, `CONFIGS`, `PAGE`) via `handlers.title`; fix `handlers.cjs` CJS require bug; all frontend callers updated from `window.ticket.*` / `window.config.*` style to `window.TICKET.*` / `window.CONFIGS.*` etc.
+- refactor(TicketContext): add `saveTicket` function that routes to `EDIT_TICKET` when `id` is present or `SAVE_TICKET` for new records, and reloads tickets automatically; components (TicketList, FormNewTicket, FormEditTicket) now call `saveTicket` from context instead of invoking IPC directly
+
+## 1.12.0
+
+### Minor Changes
+
+- Add URL-param Filter component and refactor TicketContext to useState
+
 ## 1.11.2
 
 ### Patch Changes

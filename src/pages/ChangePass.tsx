@@ -39,7 +39,7 @@ export function ChangePass() {
   async function onSubmit(formValues: FieldValues) {
     const { currentPass, newPass } = passSchema.parse(formValues);
 
-    const resp = await (window as any).config.comparePass(currentPass);
+    const resp = await window.CONFIGS.COMPARE_PASS(currentPass);
 
     if (!resp) {
       setToastDescription("A senha digitada está incorreta!");
@@ -47,7 +47,7 @@ export function ChangePass() {
     }
 
     try {
-      const hasSuccess = await (window as any).config.changePass({
+      const hasSuccess = await window.CONFIGS.CHANGE_PASS({
         newPass,
         pass: currentPass,
       });

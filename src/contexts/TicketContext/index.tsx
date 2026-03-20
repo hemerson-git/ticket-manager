@@ -1,60 +1,121 @@
-import { ReactNode, createContext, useEffect, useReducer, useRef } from "react";
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { TicketProps } from "../../components/TicketList";
-import { reducers } from "./reducers";
-import { TicketActionProps, buildActions } from "./actions-builder";
+import { FilterProps, defaultFilter } from "./actions";
+import { fetchFilteredTickets } from "./actions-builder";
+import { EditedTicket, Ticket } from "../../types/ticket";
+
+export type { FilterProps };
+export { defaultFilter };
 
 type TicketContextProps = {
-  state: StateProps;
-  actions: TicketActionProps;
-};
-
-type TicketProviderProps = {
-  children: ReactNode;
-};
-
-export type FilterProps = {
-  recipient: string;
-  type: "all" | "paid" | "unpaid";
-  expiry_date?: Date;
-  limite_expire_date?: Date;
-  document_number?: string;
-  is_online?: boolean;
-};
-
-export type StateProps = typeof globalState;
-
-export const globalState = {
-  isLoading: false,
-  tickets: [] as TicketProps[],
-  filter: {
-    recipient: "",
-    type: "all",
-    document_number: "",
-    is_online: undefined,
-  } as FilterProps,
-  page: 1,
-  totalPages: 1,
+  tickets: TicketProps[];
+  filter: FilterProps;
+  page: number;
+  totalPages: number;
+  isLoading: boolean;
+  loadTickets: () => Promise<void>;
+  setFilter: (filter: FilterProps, page?: number) => void;
+  clearFilter: () => void;
+  setPage: (page: number) => void;
+  deleteTicket: (id: string) => Promise<boolean>;
+  saveTicket: (ticket: EditedTicket) => Promise<Ticket>;
 };
 
 export const TicketContext = createContext({} as TicketContextProps);
 
-export function TicketProvider({ children }: TicketProviderProps) {
-  //@ts-ignore
-  const [state, dispatch] = useReducer(reducers, globalState);
-  const actions = useRef(buildActions(dispatch));
+export function TicketProvider({ children }: { children: ReactNode }) {
+  const [tickets, setTickets] = useState<TicketProps[]>([]);
+  const [filter, setFilterState] = useState<FilterProps>(defaultFilter);
+  const [page, setPageState] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const loadTickets = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { tickets: data, pages } = await fetchFilteredTickets(filter, page);
+      setTickets(data);
+      setTotalPages(pages);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filter, page]);
+
+  const saveTicket = async (ticket: EditedTicket) => {
+    const data = ticket;
+
+    if (ticket.id) {
+      const updatedTicket = await window.TICKET.EDIT_TICKET( ticket );
+      setIsLoading(true);
+      await loadTickets();
+      setIsLoading(false);
+      return updatedTicket;
+    }
+
+    const newTicket = await window.TICKET.SAVE_TICKET(data);
+    await loadTickets();
+
+    return newTicket;
+  };
+
+  const deleteTicket = async (id: string) => {
+    setIsLoading(true);
+    const isDeleted = await window.TICKET.DELETE_TICKET({ id});
+
+    console.log("isDeleted", isDeleted);
+
+    if (isDeleted) {
+      await loadTickets();
+      setIsLoading(false);
+      return true;
+    }
+
+    setIsLoading(false);
+    return false;
+  };
 
   useEffect(() => {
-    actions.current.setTickets(state.page);
-    // actions.current.setTotalPages();
-  }, [state.page]);
+    loadTickets();
+  }, [loadTickets]);
 
-  // useEffect(() => {
-  //   actions.current.setTotalPages();
-  // }, [state.tickets]);
+  function setFilter(newFilter: FilterProps, newPage = 1) {
+    setFilterState(newFilter);
+    setPageState(newPage);
+  }
+
+  function clearFilter() {
+    setFilterState(defaultFilter);
+    setPageState(1);
+  }
 
   return (
-    <TicketContext.Provider value={{ state, actions: actions.current }}>
+    <TicketContext.Provider
+      value={{
+        tickets,
+        filter,
+        page,
+        totalPages,
+        isLoading,
+        loadTickets,
+        setFilter,
+        deleteTicket,
+        saveTicket,
+        clearFilter,
+        setPage: setPageState,
+      }}
+    >
       {children}
     </TicketContext.Provider>
   );
 }
+
+export const useTicket = () => useContext(TicketContext);

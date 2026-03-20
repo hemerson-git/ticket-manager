@@ -2,6 +2,13 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const isDev = require(`electron-is-dev`);
 
+// Interfaces
+const ticket = require("./interfaces/ticket.cjs");
+const user = require("./interfaces/user.cjs");
+const database = require("./interfaces/database.cjs");
+const configs = require("./interfaces/configs.cjs");
+const page = require("./interfaces/page.cjs");
+
 // Handlers
 const {
   saveTicketHandler,
@@ -93,56 +100,27 @@ app.on("window-all-closed", () => {
   }
 });
 
-// const gotTheLock = app.requestSingleInstanceLock();
-
-// if (!gotTheLock) {
-//   app.quit();
-// } else {
-//   app.on("second-instance", (event, commandLine, workingDirectory) => {
-//     // Someone tried to run a second instance, we should focus our window.
-//     if (win) {
-//       if (win.isMinimized()) win.restore();
-//       win.focus();
-//     }
-//     // // the commandLine is array of strings in which last element is deep link url
-//     // dialog.showErrorBox(
-//     //   "Welcome Back",
-//     //   `You arrived from: ${commandLine.pop()}`
-//     // );
-//   });
-
-//   app.whenReady().then(() => {
-//     createWindow();
-//   });
-// }
-
-
 // Ticket
-ipcMain.handle("getTotalTickets", () => getTotalTickets());
-ipcMain.handle("saveTicket", (event, data) => saveTicketHandler(event, data));
-ipcMain.handle("listTicket", (event, data) => listTicketHandler(event, data));
-ipcMain.handle("editTicket", (event, data) => editTicketHandler(event, data));
-ipcMain.handle("filterTicket", (event, data) =>
-  filterTicketHandler(event, data)
-);
+ipcMain.handle(ticket.getTotalTickets, () => getTotalTickets());
+ipcMain.handle(ticket.saveTicket, (event, data) => saveTicketHandler(event, data));
+ipcMain.handle(ticket.listTicket, (event, data) => listTicketHandler(event, data));
+ipcMain.handle(ticket.editTicket, (event, data) => editTicketHandler(event, data));
+ipcMain.handle(ticket.filterTicket, (event, data) => filterTicketHandler(event, data));
+ipcMain.handle(ticket.deleteTicket, (event, data) => deleteTicketHandler(event, data));
 
-ipcMain.handle("deleteTicket", (event, data) =>
-  deleteTicketHandler(event, data)
-);
-
-// Window
-ipcMain.handle("reloadWindow", reloadWindowHandler);
+// Page
+ipcMain.handle(page.reloadWindow, reloadWindowHandler);
 
 // Database
-ipcMain.handle("exportDatabase", exportDatabase);
-ipcMain.handle("importDatabase", importDatabase);
+ipcMain.handle(database.exportDatabase, exportDatabase);
+ipcMain.handle(database.importDatabase, importDatabase);
 
 // User
-ipcMain.handle("signIn", (event, data) => signIn(event, data));
-ipcMain.handle("isFirstUser", () => isFirstUser());
+ipcMain.handle(user.signIn, (event, data) => signIn(event, data));
+ipcMain.handle(user.isFirstUser, () => isFirstUser());
 
 // Configs
-ipcMain.handle("setDefaultPass", (event, data) => setDefaultPass(event, data));
-ipcMain.handle("comparePass", (event, data) => comparePass(event, data));
-ipcMain.handle("hasDefaultPass", (event, data) => hasDefaultPass(event, data));
-ipcMain.handle("changePass", (event, data) => changePass(event, data));
+ipcMain.handle(configs.setDefaultPass, (event, data) => setDefaultPass(event, data));
+ipcMain.handle(configs.comparePass, (event, data) => comparePass(event, data));
+ipcMain.handle(configs.hasDefaultPass, (event, data) => hasDefaultPass(event, data));
+ipcMain.handle(configs.changePass, (event, data) => changePass(event, data));

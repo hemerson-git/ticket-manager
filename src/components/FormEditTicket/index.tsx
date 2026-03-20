@@ -34,7 +34,7 @@ const schema = z.object({
 
 export function FormEditTicket({ ticket }: Props) {
   const { state } = useUserContext();
-  const { actions: ticketActions, state: ticketState } = useTickets();
+  const { saveTicket } = useTickets();
 
   const {
     register,
@@ -58,18 +58,16 @@ export function FormEditTicket({ ticket }: Props) {
     const data = {
       id: ticket.id,
       recipient: formValues.recipient,
-      ticketNumber: formValues.ticket_number,
-      ticketValue: Math.round(Number(formValues.ticket_value) * 100),
-      paymentPlace: formValues.payment_place,
-      isPaid: formValues.is_paid,
-      isOnline: formValues.is_online,
-      expiryDate: formValues.expiry_date,
+      document_number: formValues.ticket_number,
+      value: Math.round(Number(formValues.ticket_value) * 100),
+      payment_place: formValues.payment_place,
+      is_paid: formValues.is_paid,
+      is_online: formValues.is_online,
+      expiry_date: new Date(formValues.expiry_date),
       userId: state.user.id,
     };
 
-    await (window as any).ticket.editTicket(data);
-
-    ticketActions.setTickets(ticketState.page);
+    await saveTicket(data);
   }
 
   return (
@@ -129,20 +127,18 @@ export function FormEditTicket({ ticket }: Props) {
           )}
         />
 
-        <div className="flex items-center justify-start gap-2">
-          <label htmlFor="is_paid">Pago</label>
-          <input
+        <div className="flex items-center justify-start gap-4">
+          <Input
             type="checkbox"
-            className="rounded-sm checked:text-purple-500"
             id="is_paid"
+            label="Pago"
             {...register("is_paid")}
           />
 
-          <label htmlFor="is_online">Online</label>
-          <input
+          <Input
             type="checkbox"
-            className="rounded-sm checked:text-purple-500"
             id="is_online"
+            label="Online"
             {...register("is_online")}
           />
         </div>
