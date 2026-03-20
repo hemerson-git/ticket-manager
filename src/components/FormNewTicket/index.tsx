@@ -5,7 +5,7 @@ import { useTickets } from "../../hooks/TicketContext";
 
 export function FormNewTicket() {
   const { state } = useUserContext();
-  const { loadTickets } = useTickets();
+  const { saveTicket } = useTickets();
 
   const userId = state.user.id;
   const [recipient, setRecipient] = useState("");
@@ -24,17 +24,17 @@ export function FormNewTicket() {
 
     const data = {
       recipient,
-      ticketNumber,
-      ticketValue: value,
-      paymentPlace,
-      isPaid,
-      isOnline,
-      expiryDate,
+      document_number: ticketNumber,
+      value,
+      payment_place: paymentPlace,
+      is_paid: isPaid,
+      is_online: isOnline,
+      expiry_date: new Date(expiryDate),
       userId,
     };
 
     try {
-      await (window as any).ticket.saveTicket(data);
+      await saveTicket(data);
       setRecipient("");
       setTicketNumber("");
       setTicketValue(0);
@@ -42,8 +42,6 @@ export function FormNewTicket() {
       setIsPaid(false);
       setIsOnline(false);
       setExpiryDate(new Date().toISOString().slice(0, 10));
-
-      loadTickets();
     } catch (err) {
       alert("Aconteceu algum erro ao salvar, tente novamente!");
     }

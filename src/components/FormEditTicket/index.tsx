@@ -34,7 +34,7 @@ const schema = z.object({
 
 export function FormEditTicket({ ticket }: Props) {
   const { state } = useUserContext();
-  const { page, loadTickets } = useTickets();
+  const { saveTicket } = useTickets();
 
   const {
     register,
@@ -58,18 +58,16 @@ export function FormEditTicket({ ticket }: Props) {
     const data = {
       id: ticket.id,
       recipient: formValues.recipient,
-      ticketNumber: formValues.ticket_number,
-      ticketValue: Math.round(Number(formValues.ticket_value) * 100),
-      paymentPlace: formValues.payment_place,
-      isPaid: formValues.is_paid,
-      isOnline: formValues.is_online,
-      expiryDate: formValues.expiry_date,
+      document_number: formValues.ticket_number,
+      value: Math.round(Number(formValues.ticket_value) * 100),
+      payment_place: formValues.payment_place,
+      is_paid: formValues.is_paid,
+      is_online: formValues.is_online,
+      expiry_date: new Date(formValues.expiry_date),
       userId: state.user.id,
     };
 
-    await (window as any).ticket.editTicket(data);
-
-    loadTickets();
+    await saveTicket(data);
   }
 
   return (
