@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Pencil, Trash, CopySimple, Repeat } from "phosphor-react";
 import { Modal } from "../Modal";
+import { Table } from "../Table";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { FormEditTicket } from "../FormEditTicket";
@@ -143,165 +144,137 @@ export function TicketList() {
     <div className="max-h-[calc(100vh_-_140px)] overflow-auto pb-10">
       {tickets?.length ? (
         <>
-          <table border={1} className="border-gray-50 text-sm">
+          <Table.wrapper>
             <thead>
-              <tr className="">
-                <td className="whitespace-nowrap px-2 font-bold">Editar</td>
-
-                <td className="whitespace-nowrap px-2 font-bold">Excluir</td>
-
-                <td className="whitespace-nowrap px-2 font-bold">Duplicar</td>
-
-                <td className="whitespace-nowrap px-4 font-bold">
-                  Beneficiário
-                </td>
-                <td className="whitespace-nowrap px-4 font-bold">
-                  Nº do documento
-                </td>
-                <td className="whitespace-nowrap px-4 font-bold">Vencimento</td>
-                <td className="whitespace-nowrap px-4 font-bold">Valor</td>
-                <td className="whitespace-nowrap px-4 font-bold">
-                  Local de pagamento
-                </td>
-                <td className="whitespace-nowrap px-4 font-bold">Pago</td>
-                <td className="whitespace-nowrap px-4 font-bold">Online</td>
+              <tr>
+                <Table.td className="font-bold">Editar</Table.td>
+                <Table.td className="font-bold">Excluir</Table.td>
+                <Table.td className="font-bold">Duplicar</Table.td>
+                <Table.td className="font-bold">Beneficiário</Table.td>
+                <Table.td className="font-bold">Nº do documento</Table.td>
+                <Table.td className="font-bold">Vencimento</Table.td>
+                <Table.td className="font-bold">Valor</Table.td>
+                <Table.td className="font-bold">Local de pagamento</Table.td>
+                <Table.td className="font-bold">Pago</Table.td>
+                <Table.td className="font-bold">Online</Table.td>
               </tr>
             </thead>
 
             <Dialog.Root>
-                <tbody>
-                  {tickets.map((ticket) => {
-                    const date = dateFormat.format(
-                      new Date(ticket.expiry_date)
-                    );
+              <tbody>
+                {tickets.map((ticket, index) => {
+                  const date = dateFormat.format(new Date(ticket.expiry_date));
 
-                    return (
-                      <tr key={ticket.id}>
-                        <td align="center">
-                          <Dialog.Trigger
-                            onClick={() => handleEditTicket(ticket)}
+                  return (
+                    <Table.row key={ticket.id} isOdd={index}>
+                      <Table.td>
+                        <Dialog.Trigger onClick={() => handleEditTicket(ticket)}>
+                          <Table.button>
+                            <Pencil size={14} />
+                          </Table.button>
+                        </Dialog.Trigger>
+                      </Table.td>
+
+                      <Table.td>
+                        <AlertDialog.Root>
+                          <AlertDialog.Trigger asChild>
+                            <Table.button>
+                              <Trash size={14} />
+                            </Table.button>
+                          </AlertDialog.Trigger>
+                          <AlertDialog.Portal>
+                            <AlertDialog.Overlay className="fixed inset-0 bg-black/50" />
+                            <AlertDialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-zinc-800 p-6 shadow-xl w-[400px]">
+                              <AlertDialog.Title className="text-lg font-bold mb-2">
+                                Deletar boleto?
+                              </AlertDialog.Title>
+                              <DeleteTicketAlert ticketId={ticket.id} />
+                            </AlertDialog.Content>
+                          </AlertDialog.Portal>
+                        </AlertDialog.Root>
+                      </Table.td>
+
+                      <Table.td>
+                        <Table.button onClick={() => handleDuplicateTicket(ticket)}>
+                          <Repeat size={14} />
+                        </Table.button>
+                      </Table.td>
+
+                      <Table.td className="text-left">{ticket.recipient}</Table.td>
+
+                      <Table.td>
+                        <div className="flex w-[120px] items-center gap-2 overflow-hidden">
+                          <Table.button
+                            type="button"
+                            title="Copiar para o Clipboard"
+                            onClick={() => {
+                              navigator.clipboard.writeText(ticket.document_number);
+                              clearTimeout(timerRef.current);
+                              timerRef.current = setTimeout(() => setIsToastOpen(true), 2000);
+                            }}
                           >
-                            <Pencil />
-                          </Dialog.Trigger>
-                        </td>
+                            <CopySimple size={14} />
+                          </Table.button>
+                          <p className="line-clamp-1">
+                            {ticket.document_number.slice(0, 20)}
+                          </p>
+                        </div>
+                      </Table.td>
 
-                        <td align="center">
-                          <AlertDialog.Root>
-                            <AlertDialog.Trigger>
-                              <Trash />
-                            </AlertDialog.Trigger>
-                            <AlertDialog.Portal>
-                              <AlertDialog.Overlay className="fixed inset-0 bg-black/50" />
-                              <AlertDialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-zinc-800 p-6 shadow-xl w-[400px]">
-                                <AlertDialog.Title className="text-lg font-bold mb-2">
-                                  Deletar boleto?
-                                </AlertDialog.Title>
-                                <DeleteTicketAlert ticketId={ticket.id} />
-                              </AlertDialog.Content>
-                            </AlertDialog.Portal>
-                          </AlertDialog.Root>
-                        </td>
+                      <Table.td>
+                        <time>{date}</time>
+                      </Table.td>
 
-                        <td align="center">
-                          <button onClick={() => handleDuplicateTicket(ticket)}>
-                            <Repeat />
-                          </button>
-                        </td>
+                      <Table.td>
+                        {priceFormatter.format(ticket.value / 100)}
+                      </Table.td>
 
-                        <td className="px-4">{ticket.recipient}</td>
+                      <Table.td className="max-w-[200px]">
+                        <input
+                          type="text"
+                          name="payment_place"
+                          defaultValue={ticket.payment_place}
+                          className="max-w-full border-b border-transparent border-b-purple-500 bg-transparent"
+                          onChange={(e) =>
+                            handleChangePlace(
+                              e.target.value,
+                              ticket as TicketProps & { userId: string }
+                            )
+                          }
+                        />
+                      </Table.td>
 
-                        <td className="px-4">
-                          <div className="flex w-[120px] items-center gap-2 overflow-hidden">
-                            <button
-                              type="button"
-                              title="Copiar para o Clipboard"
-                              onClick={() => {
-                                navigator.clipboard.writeText(
-                                  ticket.document_number
-                                );
+                      <Table.td>
+                        <input
+                          type="checkbox"
+                          checked={ticket.is_paid}
+                          onChange={() =>
+                            handleTogglePayment(ticket as TicketProps & { userId: string })
+                          }
+                          className="rounded-sm text-purple-500"
+                        />
+                      </Table.td>
 
-                                clearTimeout(timerRef.current);
-                                timerRef.current = setTimeout(() => {
-                                  setIsToastOpen(true);
-                                }, 2000);
-                              }}
-                            >
-                              <CopySimple />
-                            </button>
+                      <Table.td>
+                        <input
+                          type="checkbox"
+                          checked={ticket.is_online}
+                          onChange={() =>
+                            handleToggleOnline(ticket as TicketProps & { userId: string })
+                          }
+                          className="rounded-sm text-purple-500"
+                        />
+                      </Table.td>
+                    </Table.row>
+                  );
+                })}
+              </tbody>
 
-                            <p className="line-clamp-1">
-                              {ticket.document_number.slice(0, 20)}
-                            </p>
-                          </div>
-                        </td>
-
-                        <td className="px-4">
-                          <time>{date}</time>
-                        </td>
-
-                        <td className="px-4">
-                          {priceFormatter.format(ticket.value / 100)}
-                        </td>
-
-                        <td className="max-w-[200px] px-2">
-                          <input
-                            type="text"
-                            name="payment_place"
-                            id="payment_place"
-                            defaultValue={ticket.payment_place}
-                            className="ring-none max-w-full border-b border-transparent border-b-purple-500 bg-transparent"
-                            onChange={(e) =>
-                              handleChangePlace(
-                                e.target.value,
-                                ticket as TicketProps & { userId: string }
-                              )
-                            }
-                          />
-                        </td>
-
-                        <td className="px-4 py-2">
-                          <div className="flex items-center justify-center">
-                            <input
-                              type="checkbox"
-                              name="is_paid"
-                              id="is_paid"
-                              checked={ticket.is_paid}
-                              onChange={() =>
-                                handleTogglePayment(
-                                  ticket as TicketProps & { userId: string }
-                                )
-                              }
-                              className="rounded-sm text-purple-500"
-                            />
-                          </div>
-                        </td>
-
-                        <td className="px-4 py-2">
-                          <div className="flex items-center justify-center">
-                            <input
-                              type="checkbox"
-                              name="is_online"
-                              id="is_online"
-                              checked={ticket.is_online}
-                              onChange={() =>
-                                handleToggleOnline(
-                                  ticket as TicketProps & { userId: string }
-                                )
-                              }
-                              className="rounded-sm text-purple-500"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-
-                <Modal title="Editar Boleto">
-                  {editModalData && <FormEditTicket ticket={editModalData} />}
-                </Modal>
+              <Modal title="Editar Boleto">
+                {editModalData && <FormEditTicket ticket={editModalData} />}
+              </Modal>
             </Dialog.Root>
-          </table>
+          </Table.wrapper>
 
           <footer className="flex items-center justify-center gap-2 mt-4">
             {TOTAL_PAGES.length > 1 &&
