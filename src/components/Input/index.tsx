@@ -29,19 +29,17 @@ export function Input({ label, id, mask, error, ...rest }: Props) {
             mask={mask}
             id={id}
             {...rest}
-            className={`rounded-sm border-b-2 border-purple-500 bg-transparent py-1 text-zinc-100 focus:outline-0 ${
+            className={`border-0 border-b-2 border-purple-500 bg-transparent py-1 text-zinc-100 focus:outline-0 ${
               rest.type !== "checkbox" ? "px-2" : ""
-            } ${error ? "ring-2 ring-red-300" : ""} ${rest.className ?? ""}`}
+            } ${error ? "border-b-red-400" : ""} ${rest.className ?? ""}`}
           />
         ) : (
           <input
             id={id}
             {...rest}
-            className={`rounded-sm border-b-2 border-purple-500 bg-transparent py-1 text-zinc-100 focus:outline-0 ${
-              rest.type === "checkbox"
-                ? "checked:text-purple-500"
-                : "px-2"
-            } ${error ? "ring-2 ring-red-300" : ""} ${rest.className ?? ""}`}
+            className={`border-0 border-b-2 border-purple-500 bg-transparent py-1 text-zinc-100 focus:outline-0 ${
+              rest.type === "checkbox" ? "checked:text-purple-500" : "px-2"
+            } ${error ? "border-b-red-400" : ""} ${rest.className ?? ""}`}
           />
         )}
 
