@@ -58,8 +58,8 @@ export function Filter() {
   const hasExpiry = !!searchParams.get("expiry_date");
 
   return (
-    <div className="flex items-center justify-between gap-3 px-3 py-2">
-      <div className="flex items-center gap-3 flex-wrap">
+    <div className="flex items-center gap-3 px-3 py-2">
+      <div className="flex flex-1 items-end gap-3">
         <Input
           name="recipient"
           placeholder="Beneficiário"
@@ -98,7 +98,7 @@ export function Filter() {
           name="is_online"
           value={searchParams.get("is_online") || ""}
           onChange={handleChange}
-          className="border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
+          className="flex-1 border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
         >
           <option value="">Todos</option>
           <option value="on-line">On-line</option>
@@ -109,7 +109,7 @@ export function Filter() {
           name="type"
           value={searchParams.get("type") || "all"}
           onChange={handleChange}
-          className="border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
+          className="flex-1 border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
         >
           <option value="all">Todos</option>
           <option value="paid">Pagos</option>
