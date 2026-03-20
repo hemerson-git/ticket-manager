@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.1
+
+### Patch Changes
+
+- fix(Modal, ReactToPrint): constrain modal to max-h-[90vh] with flex-col so header and footer are always visible; print content area scrolls independently with flex-1 overflow-y-auto
+
 ## 1.15.0
 
 ### Minor Changes
