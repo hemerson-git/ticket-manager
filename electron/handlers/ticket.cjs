@@ -42,7 +42,7 @@ const editTicketHandler = async (event, data) => {
     payment_place: z.string(),
     is_paid: z.boolean(),
     is_online: z.boolean(),
-    expiry_date: z.string(),
+    expiry_date: z.coerce.date(),
     userId: z.string(),
   });
 
@@ -70,7 +70,7 @@ const editTicketHandler = async (event, data) => {
       },
       data: {
         document_number,
-        expiry_date: new Date(expiry_date),
+        expiry_date,
         is_paid,
         is_online,
         payment_place,
@@ -164,6 +164,7 @@ const filterTicketHandler = async (event, data) => {
     is_paid: z.boolean().optional(),
     recipient: z.string().optional(),
     document_number: z.string().optional(),
+    payment_place: z.string().optional(),
     is_online: z.boolean().optional(),
     expiry_date: z.coerce.date().optional(),
     limite_expire_date: z.coerce.date().optional(),
@@ -176,6 +177,7 @@ const filterTicketHandler = async (event, data) => {
       is_paid,
       recipient,
       document_number,
+      payment_place,
       is_online,
       expiry_date,
       limite_expire_date,
@@ -192,6 +194,7 @@ const filterTicketHandler = async (event, data) => {
     const where = {
       ...(recipient && { recipient: { startsWith: recipient } }),
       ...(document_number && { document_number: { startsWith: document_number } }),
+      ...(payment_place && { payment_place: { startsWith: payment_place } }),
       ...(is_online !== undefined && { is_online: { equals: is_online } }),
       ...(is_paid !== undefined && { is_paid: { equals: is_paid } }),
       expiry_date: getDateFilter(),

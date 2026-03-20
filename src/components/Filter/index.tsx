@@ -11,6 +11,7 @@ function parseParams(params: URLSearchParams): FilterProps {
   return {
     recipient: params.get("recipient") || "",
     document_number: params.get("document_number") || "",
+    payment_place: params.get("payment_place") || "",
     type: (params.get("type") as FilterProps["type"]) || "all",
     is_online:
       isOnlineParam === null
@@ -73,6 +74,14 @@ export function Filter() {
           name="document_number"
           placeholder="Nº do documento"
           value={searchParams.get("document_number") || ""}
+          onChange={handleChange}
+          className="text-sm"
+        />
+
+        <Input
+          name="payment_place"
+          placeholder="Local de pagamento"
+          value={searchParams.get("payment_place") || ""}
           onChange={handleChange}
           className="text-sm"
         />
