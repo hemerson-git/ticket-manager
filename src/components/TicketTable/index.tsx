@@ -32,6 +32,7 @@ export function TicketTable() {
 
   const [editModalData, setEditModalData] = useState<TicketProps | null>(null);
   const [isToastOpen, setIsToastOpen] = useState(false);
+  const [isSaveToastOpen, setIsSaveToastOpen] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -231,7 +232,12 @@ export function TicketTable() {
           </tbody>
 
           <Modal title="Editar Boleto">
-            {editModalData && <FormEditTicket ticket={editModalData} />}
+            {editModalData && (
+              <FormEditTicket
+                ticket={editModalData}
+                onSaved={() => setIsSaveToastOpen(true)}
+              />
+            )}
           </Modal>
         </Dialog.Root>
       </Table.wrapper>
@@ -241,6 +247,13 @@ export function TicketTable() {
         description="Texto Copiado para a área de transferência"
         isOpen={isToastOpen}
         onOpenChange={setIsToastOpen}
+      />
+
+      <Toast
+        title="Boleto atualizado!"
+        description="As alterações foram salvas com sucesso."
+        isOpen={isSaveToastOpen}
+        onOpenChange={setIsSaveToastOpen}
       />
     </>
   );

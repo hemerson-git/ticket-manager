@@ -9,6 +9,7 @@ import { useTickets } from "../../hooks/TicketContext";
 
 type Props = {
   ticket: TicketProps;
+  onSaved?: () => void;
 };
 
 type FormData = {
@@ -33,7 +34,7 @@ const schema = z.object({
   is_online: z.boolean(),
 });
 
-export function FormEditTicket({ ticket }: Props) {
+export function FormEditTicket({ ticket, onSaved }: Props) {
   const { state } = useUserContext();
   const { saveTicket } = useTickets();
 
@@ -68,6 +69,7 @@ export function FormEditTicket({ ticket }: Props) {
     };
 
     await saveTicket(data);
+    onSaved?.();
   }
 
   return (
