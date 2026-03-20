@@ -1,6 +1,23 @@
 const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const path = require("path");
 const { prisma } = require("../lib/prisma.cjs");
 const salt = bcrypt.genSaltSync(10);
+
+const configsPath = path.join(__dirname, "..", "..", "configs.json");
+
+const getItemsPerPage = async () => {
+  const raw = fs.readFileSync(configsPath, "utf-8");
+  return JSON.parse(raw).items_per_page;
+};
+
+const setItemsPerPage = async (event, items_per_page) => {
+  const raw = fs.readFileSync(configsPath, "utf-8");
+  const config = JSON.parse(raw);
+  config.items_per_page = Number(items_per_page);
+  fs.writeFileSync(configsPath, JSON.stringify(config, null, 2));
+  return true;
+};
 const { z } = require("zod");
 
 const hasDefaultPass = async (event, data) => {
@@ -84,4 +101,6 @@ module.exports = {
   comparePass,
   hasDefaultPass,
   changePass,
+  getItemsPerPage,
+  setItemsPerPage,
 };

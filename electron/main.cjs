@@ -26,6 +26,8 @@ const {
   comparePass,
   hasDefaultPass,
   changePass,
+  getItemsPerPage,
+  setItemsPerPage,
 } = require("./handlers/configs.cjs");
 
 if (process.defaultApp) {
@@ -124,3 +126,5 @@ ipcMain.handle(configs.setDefaultPass, (event, data) => setDefaultPass(event, da
 ipcMain.handle(configs.comparePass, (event, data) => comparePass(event, data));
 ipcMain.handle(configs.hasDefaultPass, (event, data) => hasDefaultPass(event, data));
 ipcMain.handle(configs.changePass, (event, data) => changePass(event, data));
+ipcMain.handle(configs.getItemsPerPage, () => getItemsPerPage());
+ipcMain.handle(configs.setItemsPerPage, (event, data) => setItemsPerPage(event, data));

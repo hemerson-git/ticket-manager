@@ -72,6 +72,14 @@ contextBridge.exposeInMainWorld(handlers.configs.title, {
   [configs.changePass]: async (data) => {
     return await ipcRenderer.invoke(configs.changePass, data);
   },
+
+  [configs.getItemsPerPage]: async () => {
+    return await ipcRenderer.invoke(configs.getItemsPerPage);
+  },
+
+  [configs.setItemsPerPage]: async (data) => {
+    return await ipcRenderer.invoke(configs.setItemsPerPage, data);
+  },
 });
 
 // Page

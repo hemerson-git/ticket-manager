@@ -28,6 +28,8 @@ declare global {
       COMPARE_PASS: (pass: string) => Promise<boolean>;
       HAS_DEFAULT_PASS: () => Promise<boolean>;
       CHANGE_PASS: (data: { pass: string; newPass: string }) => Promise<boolean>;
+      GET_ITEMS_PER_PAGE: () => Promise<number>;
+      SET_ITEMS_PER_PAGE: (value: number) => Promise<boolean>;
     };
 
     PAGE: {
