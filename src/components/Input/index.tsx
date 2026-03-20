@@ -1,51 +1,47 @@
-import { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes } from "react";
 import InputMask from "react-input-mask";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
-  id: string;
-  name: string;
   mask?: string;
   error?: string;
 };
 
-export function Input({ label, id, name, error, mask, ...rest }: Props) {
+export function Input({ label, id, mask, error, ...rest }: Props) {
   return (
-    <div className="flex flex-1 items-start gap-2 ">
+    <div className="flex w-full flex-1 flex-col items-start gap-1">
       {label && (
         <label
           htmlFor={id}
-          className="inline-flex select-none whitespace-nowrap font-semibold"
+          className="inline-flex select-none whitespace-nowrap text-sm font-semibold"
         >
           {label}
         </label>
       )}
 
       <div
-        className={`flex flex-col ${
-          rest.type !== "checkbox" ? "flex-1" : "h-4 w-4 self-center p-0"
-        } relative `}
+        className={`relative flex flex-col ${
+          rest.type !== "checkbox" ? "w-full flex-1" : "h-4 w-4 self-center p-0"
+        }`}
       >
         {mask ? (
           <InputMask
             mask={mask}
             id={id}
             {...rest}
-            className={`rounded-sm text-zinc-900 focus:outline-purple-400 focus:ring-purple-400 ${
-              !label ? "flex-1 px-2 py-1" : ""
-            } ${error ? "ring-red-300" : ""} ${rest.className}`}
+            className={`rounded-sm border-b-2 border-purple-500 bg-transparent py-1 text-zinc-100 focus:outline-0 ${
+              rest.type !== "checkbox" ? "px-2" : ""
+            } ${error ? "ring-2 ring-red-300" : ""} ${rest.className ?? ""}`}
           />
         ) : (
           <input
             id={id}
             {...rest}
-            className={`rounded-sm text-zinc-900  focus:outline-purple-400 focus:ring-purple-400 ${
-              !label ? "flex-1 px-2 py-1" : ""
-            } ${
+            className={`rounded-sm border-b-2 border-purple-500 bg-transparent py-1 text-zinc-100 focus:outline-0 ${
               rest.type === "checkbox"
-                ? "rounded-md checked:text-purple-500 focus:outline-0"
-                : ""
-            } ${error ? "ring-2 ring-red-300" : ""} ${rest.className}`}
+                ? "checked:text-purple-500"
+                : "px-2"
+            } ${error ? "ring-2 ring-red-300" : ""} ${rest.className ?? ""}`}
           />
         )}
 

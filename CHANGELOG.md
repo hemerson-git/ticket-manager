@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.14.1
+
+### Patch Changes
+
+- refactor(Input): adopt reference project pattern — label stacked above input, border-b-2 border-purple-500 style, focus:outline-0, make id and name optional; FormEditTicket checkboxes now use Input component
+
 ## 1.14.0
 
 ### Minor Changes

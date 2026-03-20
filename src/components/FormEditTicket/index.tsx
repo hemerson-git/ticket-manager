@@ -127,20 +127,18 @@ export function FormEditTicket({ ticket }: Props) {
           )}
         />
 
-        <div className="flex items-center justify-start gap-2">
-          <label htmlFor="is_paid">Pago</label>
-          <input
+        <div className="flex items-center justify-start gap-4">
+          <Input
             type="checkbox"
-            className="rounded-sm checked:text-purple-500"
             id="is_paid"
+            label="Pago"
             {...register("is_paid")}
           />
 
-          <label htmlFor="is_online">Online</label>
-          <input
+          <Input
             type="checkbox"
-            className="rounded-sm checked:text-purple-500"
             id="is_online"
+            label="Online"
             {...register("is_online")}
           />
         </div>
