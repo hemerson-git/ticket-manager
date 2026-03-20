@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.14.0
+
+### Minor Changes
+
+- feat(TicketTable): extract table logic from TicketList into dedicated TicketTable component; TicketList is now only responsible for layout, pagination, empty state, and total price
+
 ## 1.13.0
 
 ### Minor Changes

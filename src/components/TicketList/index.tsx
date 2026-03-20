@@ -1,16 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Pencil, Trash, CopySimple, Repeat } from "phosphor-react";
-import { Modal } from "../Modal";
-import { Table } from "../Table";
-import * as Dialog from "@radix-ui/react-dialog";
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import { FormEditTicket } from "../FormEditTicket";
-import { DeleteTicketAlert } from "../DeleteTicketAlert";
-import { Toast } from "../Toast";
 import { useTickets } from "../../hooks/TicketContext";
-import { useUserContext } from "../../hooks/UserContext";
-import { defaultFilter } from "../../contexts/TicketContext";
-// import configs from "../../../configs.json";
+import { TicketTable } from "../TicketTable";
 
 export type TicketProps = {
   id: string;
@@ -26,264 +15,34 @@ export type TicketProps = {
   };
 };
 
-const dateFormat = new Intl.DateTimeFormat(undefined, {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
 const priceFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
 });
 
 export function TicketList() {
-  const { tickets, filter, page, totalPages, setFilter, setPage, saveTicket } = useTickets();
-  const { state: userState } = useUserContext();
-  const TOTAL_PAGES = Array(totalPages ?? 1).fill("");
+  const { tickets, page, totalPages, setPage } = useTickets();
 
-  const [editModalData, setEditModalData] = useState<TicketProps | null>(null);
-  const [isToastOpen, setIsToastOpen] = useState(false);
+  const TOTAL_PAGES = Array(totalPages ?? 1).fill("");
   const TOTAL_PRICE =
     tickets?.length > 0
-      ? tickets.reduce((buffer, ticket) => (buffer += ticket.value / 100), 0)
+      ? tickets.reduce((sum, ticket) => sum + ticket.value / 100, 0)
       : 0;
-
-  const timerRef = useRef<any>(0);
-
-  function handleEditTicket(ticket: TicketProps) {
-    setEditModalData(ticket);
-  }
-
-  async function handleTogglePayment(ticket: TicketProps & { userId: string }) {
-    const is_paid = !ticket.is_paid;
-
-    const newTicket = {
-      id: ticket.id,
-      recipient: ticket.recipient,
-      document_number: ticket.document_number,
-      value: ticket.value,
-      payment_place: ticket.payment_place,
-      is_paid,
-      is_online: ticket.is_online,
-      expiry_date: ticket.expiry_date,
-      userId: ticket.userId,
-    };
-
-    await saveTicket(newTicket);
-
-    if (JSON.stringify(filter) !== JSON.stringify(defaultFilter)) {
-      return setFilter(filter);
-    }
-  }
-
-  async function handleToggleOnline(ticket: TicketProps & { userId: string }) {
-    const is_online = !ticket.is_online;
-
-    const newTicket = {
-      id: ticket.id,
-      recipient: ticket.recipient,
-      document_number: ticket.document_number,
-      value: ticket.value,
-      payment_place: ticket.payment_place,
-      is_paid: ticket.is_paid,
-      is_online,
-      expiry_date: ticket.expiry_date,
-      userId: ticket.userId,
-    };
-
-    await saveTicket(newTicket);
-
-    setFilter(filter, page);
-  }
-
-  async function handleChangePlace(
-    place: string,
-    ticket: TicketProps & { userId: string }
-  ) {
-    const editedTicket = {
-      id: ticket.id,
-      recipient: ticket.recipient,
-      document_number: ticket.document_number,
-      value: ticket.value,
-      payment_place: place,
-      is_paid: ticket.is_paid,
-      is_online: ticket.is_online,
-      expiry_date: ticket.expiry_date,
-      userId: ticket.userId,
-    };
-
-    try {
-      await saveTicket(editedTicket);
-    } catch (err) {
-      alert("Não foi possível salvar as alterações, tente novamente");
-    }
-  }
-
-  async function handleDuplicateTicket(ticket: TicketProps) {
-    const newTicket = {
-      recipient: ticket.recipient,
-      document_number: ticket.document_number,
-      value: ticket.value,
-      payment_place: ticket.payment_place,
-      is_paid: ticket.is_paid,
-      is_online: ticket.is_online,
-      expiry_date: ticket.expiry_date,
-      userId: userState.user.id,
-    };
-
-    await saveTicket(newTicket);
-  }
-
-  useEffect(() => {
-    return () => clearTimeout(timerRef.current);
-  }, []);
 
   return (
     <div className="max-h-[calc(100vh_-_140px)] overflow-auto pb-10">
       {tickets?.length ? (
         <>
-          <Table.wrapper>
-            <thead>
-              <tr>
-                <Table.td className="font-bold">Editar</Table.td>
-                <Table.td className="font-bold">Excluir</Table.td>
-                <Table.td className="font-bold">Duplicar</Table.td>
-                <Table.td className="font-bold">Beneficiário</Table.td>
-                <Table.td className="font-bold">Nº do documento</Table.td>
-                <Table.td className="font-bold">Vencimento</Table.td>
-                <Table.td className="font-bold">Valor</Table.td>
-                <Table.td className="font-bold">Local de pagamento</Table.td>
-                <Table.td className="font-bold">Pago</Table.td>
-                <Table.td className="font-bold">Online</Table.td>
-              </tr>
-            </thead>
-
-            <Dialog.Root>
-              <tbody>
-                {tickets.map((ticket, index) => {
-                  const date = dateFormat.format(new Date(ticket.expiry_date));
-
-                  return (
-                    <Table.row key={ticket.id} isOdd={index}>
-                      <Table.td>
-                        <Dialog.Trigger onClick={() => handleEditTicket(ticket)}>
-                          <Table.button>
-                            <Pencil size={14} />
-                          </Table.button>
-                        </Dialog.Trigger>
-                      </Table.td>
-
-                      <Table.td>
-                        <AlertDialog.Root>
-                          <AlertDialog.Trigger asChild>
-                            <Table.button>
-                              <Trash size={14} />
-                            </Table.button>
-                          </AlertDialog.Trigger>
-                          <AlertDialog.Portal>
-                            <AlertDialog.Overlay className="fixed inset-0 bg-black/50" />
-                            <AlertDialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-zinc-800 p-6 shadow-xl w-[400px]">
-                              <AlertDialog.Title className="text-lg font-bold mb-2">
-                                Deletar boleto?
-                              </AlertDialog.Title>
-                              <DeleteTicketAlert ticketId={ticket.id} />
-                            </AlertDialog.Content>
-                          </AlertDialog.Portal>
-                        </AlertDialog.Root>
-                      </Table.td>
-
-                      <Table.td>
-                        <Table.button onClick={() => handleDuplicateTicket(ticket)}>
-                          <Repeat size={14} />
-                        </Table.button>
-                      </Table.td>
-
-                      <Table.td className="text-left">{ticket.recipient}</Table.td>
-
-                      <Table.td>
-                        <div className="flex w-[120px] items-center gap-2 overflow-hidden">
-                          <Table.button
-                            type="button"
-                            title="Copiar para o Clipboard"
-                            onClick={() => {
-                              navigator.clipboard.writeText(ticket.document_number);
-                              clearTimeout(timerRef.current);
-                              timerRef.current = setTimeout(() => setIsToastOpen(true), 2000);
-                            }}
-                          >
-                            <CopySimple size={14} />
-                          </Table.button>
-                          <p className="line-clamp-1">
-                            {ticket.document_number.slice(0, 20)}
-                          </p>
-                        </div>
-                      </Table.td>
-
-                      <Table.td>
-                        <time>{date}</time>
-                      </Table.td>
-
-                      <Table.td>
-                        {priceFormatter.format(ticket.value / 100)}
-                      </Table.td>
-
-                      <Table.td className="max-w-[200px]">
-                        <input
-                          type="text"
-                          name="payment_place"
-                          defaultValue={ticket.payment_place}
-                          className="max-w-full border-b border-transparent border-b-purple-500 bg-transparent"
-                          onChange={(e) =>
-                            handleChangePlace(
-                              e.target.value,
-                              ticket as TicketProps & { userId: string }
-                            )
-                          }
-                        />
-                      </Table.td>
-
-                      <Table.td>
-                        <input
-                          type="checkbox"
-                          checked={ticket.is_paid}
-                          onChange={() =>
-                            handleTogglePayment(ticket as TicketProps & { userId: string })
-                          }
-                          className="rounded-sm text-purple-500"
-                        />
-                      </Table.td>
-
-                      <Table.td>
-                        <input
-                          type="checkbox"
-                          checked={ticket.is_online}
-                          onChange={() =>
-                            handleToggleOnline(ticket as TicketProps & { userId: string })
-                          }
-                          className="rounded-sm text-purple-500"
-                        />
-                      </Table.td>
-                    </Table.row>
-                  );
-                })}
-              </tbody>
-
-              <Modal title="Editar Boleto">
-                {editModalData && <FormEditTicket ticket={editModalData} />}
-              </Modal>
-            </Dialog.Root>
-          </Table.wrapper>
+          <TicketTable />
 
           <footer className="flex items-center justify-center gap-2 mt-4">
             {TOTAL_PAGES.length > 1 &&
               TOTAL_PAGES.map((_, index) => (
                 <button
-                  key={crypto.randomUUID()}
+                  key={index}
                   className="
-                    flex items-center justify-center bg-purple-400 border h-8 w-8 rounded-md transition all 
-                    hover:bg-transparent hover: border-purple-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-purple-400
+                    flex items-center justify-center bg-purple-400 border h-8 w-8 rounded-md transition-all
+                    hover:bg-transparent hover:border-purple-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-purple-400
                   "
                   disabled={page === index + 1}
                   onClick={() => setPage(index + 1)}
@@ -305,13 +64,6 @@ export function TicketList() {
       <footer className="fixed bottom-0 left-0 flex w-full flex-1 justify-end p-4 pr-12">
         <span>Total: {priceFormatter.format(TOTAL_PRICE)}</span>
       </footer>
-
-      <Toast
-        title="Copiado!"
-        description="Texto Copiado para a área de transferência"
-        isOpen={isToastOpen}
-        onOpenChange={setIsToastOpen}
-      />
     </div>
   );
 }
