@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Plus, Pencil, Trash, CopySimple, Repeat } from "phosphor-react";
+import { Pencil, Trash, CopySimple, Repeat } from "phosphor-react";
 import { Modal } from "../Modal";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import { FormNewTicket } from "../FormNewTicket";
 import { FormEditTicket } from "../FormEditTicket";
-import { AlertModal } from "../AlertModal";
+import { DeleteTicketAlert } from "../DeleteTicketAlert";
 import { Toast } from "../Toast";
-import { ReactToPrint } from "../ReactToPrint";
 import { useTickets } from "../../hooks/TicketContext";
-import { Button } from "../Button";
 import { useUserContext } from "../../hooks/UserContext";
 import { defaultFilter } from "../../contexts/TicketContext";
 // import configs from "../../../configs.json";
@@ -41,14 +38,11 @@ const priceFormatter = new Intl.NumberFormat("pt-BR", {
 });
 
 export function TicketList() {
-  const { tickets, filter, page, totalPages, setFilter, setPage, loadTickets } = useTickets();
+  const { tickets, filter, page, totalPages, setFilter, setPage, saveTicket } = useTickets();
   const { state: userState } = useUserContext();
   const TOTAL_PAGES = Array(totalPages ?? 1).fill("");
 
   const [editModalData, setEditModalData] = useState<TicketProps | null>(null);
-  const [deleteModalData, setDeleteModalData] = useState<TicketProps | null>(
-    null
-  );
   const [isToastOpen, setIsToastOpen] = useState(false);
   const TOTAL_PRICE =
     tickets?.length > 0
@@ -61,55 +55,44 @@ export function TicketList() {
     setEditModalData(ticket);
   }
 
-  async function handleDeleteTicket(ticket: TicketProps) {
-    setDeleteModalData(ticket);
-  }
-
-  async function confirmTicketDelete() {
-    await (window as any).ticket.deleteTicket(deleteModalData);
-    setFilter(filter, page);
-  }
-
   async function handleTogglePayment(ticket: TicketProps & { userId: string }) {
-    const isPaid = !ticket.is_paid;
+    const is_paid = !ticket.is_paid;
 
     const newTicket = {
       id: ticket.id,
       recipient: ticket.recipient,
-      ticketNumber: ticket.document_number,
-      ticketValue: ticket.value,
-      paymentPlace: ticket.payment_place,
-      isPaid,
-      isOnline: ticket.is_online,
-      expiryDate: ticket.expiry_date.toISOString().slice(0, 10),
+      document_number: ticket.document_number,
+      value: ticket.value,
+      payment_place: ticket.payment_place,
+      is_paid,
+      is_online: ticket.is_online,
+      expiry_date: ticket.expiry_date,
       userId: ticket.userId,
     };
 
-    await (window as any).ticket.editTicket(newTicket);
+    await saveTicket(newTicket);
 
     if (JSON.stringify(filter) !== JSON.stringify(defaultFilter)) {
       return setFilter(filter);
     }
-
-    loadTickets();
   }
 
   async function handleToggleOnline(ticket: TicketProps & { userId: string }) {
-    const isOnline = !ticket.is_online;
+    const is_online = !ticket.is_online;
 
     const newTicket = {
       id: ticket.id,
       recipient: ticket.recipient,
-      ticketNumber: ticket.document_number,
-      ticketValue: ticket.value,
-      paymentPlace: ticket.payment_place,
-      isPaid: ticket.is_paid,
-      isOnline,
-      expiryDate: ticket.expiry_date.toISOString().slice(0, 10),
+      document_number: ticket.document_number,
+      value: ticket.value,
+      payment_place: ticket.payment_place,
+      is_paid: ticket.is_paid,
+      is_online,
+      expiry_date: ticket.expiry_date,
       userId: ticket.userId,
     };
 
-    await (window as any).ticket.editTicket(newTicket);
+    await saveTicket(newTicket);
 
     setFilter(filter, page);
   }
@@ -121,17 +104,17 @@ export function TicketList() {
     const editedTicket = {
       id: ticket.id,
       recipient: ticket.recipient,
-      ticketNumber: ticket.document_number,
-      ticketValue: ticket.value,
-      paymentPlace: place,
-      isPaid: ticket.is_paid,
-      isOnline: ticket.is_online,
-      expiryDate: ticket.expiry_date.toISOString().slice(0, 10),
+      document_number: ticket.document_number,
+      value: ticket.value,
+      payment_place: place,
+      is_paid: ticket.is_paid,
+      is_online: ticket.is_online,
+      expiry_date: ticket.expiry_date,
       userId: ticket.userId,
     };
 
     try {
-      await (window as any).ticket.editTicket(editedTicket);
+      await saveTicket(editedTicket);
     } catch (err) {
       alert("Não foi possível salvar as alterações, tente novamente");
     }
@@ -139,19 +122,17 @@ export function TicketList() {
 
   async function handleDuplicateTicket(ticket: TicketProps) {
     const newTicket = {
-      id: ticket.id,
       recipient: ticket.recipient,
-      ticketNumber: ticket.document_number,
-      ticketValue: ticket.value,
-      paymentPlace: ticket.payment_place,
-      isPaid: ticket.is_paid,
-      isOnline: ticket.is_online,
-      expiryDate: ticket.expiry_date.toISOString().slice(0, 10),
+      document_number: ticket.document_number,
+      value: ticket.value,
+      payment_place: ticket.payment_place,
+      is_paid: ticket.is_paid,
+      is_online: ticket.is_online,
+      expiry_date: ticket.expiry_date,
       userId: userState.user.id,
     };
 
-    await (window as any).ticket.saveTicket(newTicket);
-    setFilter(filter, page);
+    await saveTicket(newTicket);
   }
 
   useEffect(() => {
@@ -160,27 +141,6 @@ export function TicketList() {
 
   return (
     <div className="max-h-[calc(100vh_-_140px)] overflow-auto pb-10">
-      <div className="mb-4 flex items-center justify-between px-4">
-        <div className="flex flex-1 justify-between pr-4">
-          <h1 className="text-lg font-bold ">TicketList</h1>
-          <ReactToPrint tickets={tickets} />
-        </div>
-
-        <Dialog.Root modal>
-          <div>
-            <Dialog.Trigger asChild>
-              <Button>
-                <Plus />
-                Cria Novo
-              </Button>
-            </Dialog.Trigger>
-          </div>
-
-          <Modal title="Adicionar novo boleto">
-            <FormNewTicket />
-          </Modal>
-        </Dialog.Root>
-      </div>
       {tickets?.length ? (
         <>
           <table border={1} className="border-gray-50 text-sm">
@@ -209,7 +169,6 @@ export function TicketList() {
             </thead>
 
             <Dialog.Root>
-              <AlertDialog.Root>
                 <tbody>
                   {tickets.map((ticket) => {
                     const date = dateFormat.format(
@@ -227,11 +186,20 @@ export function TicketList() {
                         </td>
 
                         <td align="center">
-                          <AlertDialog.Trigger
-                            onClick={() => handleDeleteTicket(ticket)}
-                          >
-                            <Trash />
-                          </AlertDialog.Trigger>
+                          <AlertDialog.Root>
+                            <AlertDialog.Trigger>
+                              <Trash />
+                            </AlertDialog.Trigger>
+                            <AlertDialog.Portal>
+                              <AlertDialog.Overlay className="fixed inset-0 bg-black/50" />
+                              <AlertDialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-zinc-800 p-6 shadow-xl w-[400px]">
+                                <AlertDialog.Title className="text-lg font-bold mb-2">
+                                  Deletar boleto?
+                                </AlertDialog.Title>
+                                <DeleteTicketAlert ticketId={ticket.id} />
+                              </AlertDialog.Content>
+                            </AlertDialog.Portal>
+                          </AlertDialog.Root>
                         </td>
 
                         <td align="center">
@@ -332,24 +300,6 @@ export function TicketList() {
                 <Modal title="Editar Boleto">
                   {editModalData && <FormEditTicket ticket={editModalData} />}
                 </Modal>
-
-                {deleteModalData && (
-                  <AlertModal
-                    title="Deletar boleto?"
-                    onConfirm={confirmTicketDelete}
-                  >
-                    O Boleto de nº{" "}
-                    <span className="font-bold">
-                      {deleteModalData.document_number}
-                    </span>
-                    , do beneficiário{" "}
-                    <span className="font-bold">
-                      {deleteModalData.recipient}
-                    </span>{" "}
-                    será apagado de forma permanente, você deseja continuar?
-                  </AlertModal>
-                )}
-              </AlertDialog.Root>
             </Dialog.Root>
           </table>
 
