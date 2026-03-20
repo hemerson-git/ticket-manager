@@ -1,5 +1,12 @@
 # ticket-manager
 
+## 1.15.4
+
+### Patch Changes
+
+- fix(FormEditTicket): use Controller for checkboxes to fix value not saving — register() without forwardRef can't sync checked state via ref; Controller with explicit checked/onChange binding ensures is_paid and is_online are properly submitted; also replace raw submit button with Button component
+- fix(Input): align checkbox and label horizontally — checkboxes now use flex-row items-center so the label sits beside the input instead of stacking above it
+
 ## 1.15.3
 
 ### Patch Changes
