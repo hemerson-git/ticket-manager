@@ -1,22 +1,38 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
 import { Slot } from "@radix-ui/react-slot";
+import { forwardRef, type ButtonHTMLAttributes } from "react";
+import { variants } from "./styles";
+import { Spinner } from "phosphor-react";
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: ReactNode;
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   asChild?: boolean;
+  variant?: keyof typeof variants;
+  isLoading?: boolean;
 };
 
-export function Button({ children, asChild, ...rest }: Props) {
-  const Component = asChild ? Slot : "button";
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  function Button(
+    { asChild, children, className, variant = "primary", isLoading, ...props },
+    ref
+  ) {
+    const Comp = asChild ? Slot : "button";
 
-  return (
-    <Component
-      {...rest}
-      className="
-              flex gap-2 border border-purple-400 px-4 py-1 items-center rounded-sm 
-              hover:bg-purple-500 hover:text-white transition-colors"
-    >
-      {children}
-    </Component>
-  );
-}
+    return (
+      <Comp
+        ref={ref}
+        {...props}
+        className={`flex items-center gap-2 rounded-sm border px-4 py-1 transition-colors cursor-pointer ${className ?? ""} ${
+          variants[variant]
+        } ${isLoading ? "!cursor-not-allowed opacity-30 relative" : ""}`}
+      >
+        {isLoading ? (
+          <span>
+            <Spinner className="animate-spin absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]" />
+            <span className="invisible">{children}</span>
+          </span>
+        ) : (
+          children
+        )}
+      </Comp>
+    );
+  }
+);
