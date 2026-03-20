@@ -37,8 +37,10 @@ export function Input({ label, id, mask, error, ...rest }: Props) {
           <input
             id={id}
             {...rest}
-            className={`border-0 border-b-2 border-purple-500 bg-transparent py-1 text-zinc-100 focus:outline-0 ${
-              rest.type === "checkbox" ? "checked:text-purple-500" : "px-2"
+            className={`bg-transparent text-zinc-100 focus:outline-0 ${
+              rest.type === "checkbox"
+                ? "h-4 w-4 cursor-pointer rounded-sm border-2 border-purple-500 checked:accent-purple-500"
+                : "border-0 border-b-2 border-purple-500 px-2 py-1"
             } ${error ? "border-b-red-400" : ""} ${rest.className ?? ""}`}
           />
         )}
