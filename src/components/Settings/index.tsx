@@ -8,9 +8,8 @@ type Props = {
 export function Settings({ onSaved }: Props) {
   return (
     <div>
-      <Link to="/change-pass">Change Password</Link>
-
       <Form onSaved={onSaved} />
+      <Link to="/change-pass">Change Password</Link>
     </div>
   );
 }

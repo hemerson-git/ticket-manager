@@ -49,7 +49,7 @@ function HomeHeader() {
         </Dialog.Root>
 
         <Dialog.Root>
-          <Modal title="Configurações" className="min-w-0 w-[300px]">
+          <Modal title="Configurações" className="min-w-0 w-[200px]">
             <Settings onSaved={() => setSettingsToast(true)} />
           </Modal>
           <Dialog.Trigger asChild>
