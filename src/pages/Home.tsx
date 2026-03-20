@@ -4,6 +4,7 @@ import {
   GearSix,
   Plus,
 } from "phosphor-react";
+import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import Header from "../components/Header";
 import { Filter } from "../components/Filter";
@@ -12,6 +13,7 @@ import { Modal } from "../components/Modal";
 import { Settings } from "../components/Settings";
 import { FormNewTicket } from "../components/FormNewTicket";
 import { ReactToPrint } from "../components/ReactToPrint";
+import { Toast } from "../components/Toast";
 import { TicketProvider } from "../contexts/TicketContext";
 import { useTickets } from "../hooks/TicketContext";
 import { useUserContext } from "../hooks/UserContext";
@@ -19,6 +21,7 @@ import { useUserContext } from "../hooks/UserContext";
 function HomeHeader() {
   const { tickets } = useTickets();
   const { state: userState, action } = useUserContext();
+  const [settingsToast, setSettingsToast] = useState(false);
 
   async function handleExportDatabase() {
     await window.DATABASE.EXPORT_DATABASE();
@@ -47,7 +50,7 @@ function HomeHeader() {
 
         <Dialog.Root>
           <Modal title="Configurações" className="min-w-0 w-[300px]">
-            <Settings />
+            <Settings onSaved={() => setSettingsToast(true)} />
           </Modal>
           <Dialog.Trigger asChild>
             <Header.button title="Configurações">
@@ -72,6 +75,13 @@ function HomeHeader() {
         />
       </Header.navigation>
     </Header.wrapper>
+
+    <Toast
+      title="Configurações"
+      description="Items por página atualizado!"
+      isOpen={settingsToast}
+      onOpenChange={setSettingsToast}
+    />
   );
 }
 
