@@ -3,6 +3,7 @@ import { Pencil, Trash, CopySimple, Repeat } from "phosphor-react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { Table } from "../Table";
+import { Input } from "../Input";
 import { Modal } from "../Modal";
 import { Toast } from "../Toast";
 import { FormEditTicket } from "../FormEditTicket";
@@ -191,11 +192,11 @@ export function TicketTable() {
                   <Table.td>{priceFormatter.format(ticket.value / 100)}</Table.td>
 
                   <Table.td className="max-w-[200px]">
-                    <input
+                    <Input
                       type="text"
                       name="payment_place"
                       defaultValue={ticket.payment_place}
-                      className="max-w-full border-b border-transparent border-b-purple-500 bg-transparent"
+                      className="max-w-full text-sm"
                       onChange={(e) =>
                         handleChangePlace(
                           e.target.value,
@@ -206,24 +207,22 @@ export function TicketTable() {
                   </Table.td>
 
                   <Table.td>
-                    <input
+                    <Input
                       type="checkbox"
                       checked={ticket.is_paid}
                       onChange={() =>
                         handleTogglePayment(ticket as TicketProps & { userId: string })
                       }
-                      className="rounded-sm text-purple-500"
                     />
                   </Table.td>
 
                   <Table.td>
-                    <input
+                    <Input
                       type="checkbox"
                       checked={ticket.is_online}
                       onChange={() =>
                         handleToggleOnline(ticket as TicketProps & { userId: string })
                       }
-                      className="rounded-sm text-purple-500"
                     />
                   </Table.td>
                 </Table.row>

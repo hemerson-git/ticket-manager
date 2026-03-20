@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.14.3
+
+### Patch Changes
+
+- refactor(TicketTable): replace raw input elements with Input component
+
 ## 1.14.2
 
 ### Patch Changes
