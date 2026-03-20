@@ -29,11 +29,11 @@ export function Menu() {
   }
 
   async function handleExportDatabase() {
-    await (window as any).database.exportDatabase();
+    await window.DATABASE.EXPORT_DATABASE();
   }
 
   async function handleImportDatabase() {
-    const resp = await (window as any).database.importDatabase();
+    const resp = await window.DATABASE.IMPORT_DATABASE();
     if (resp) location.reload();
   }
 
