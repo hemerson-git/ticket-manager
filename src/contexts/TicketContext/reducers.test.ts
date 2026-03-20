@@ -1,120 +1,98 @@
-import { describe, it, expect } from "vitest";
-import { reducers } from "./reducers";
-import { actions } from "./actions";
-import { globalState, FilterProps, StateProps } from ".";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { fetchTickets, fetchFilteredTickets } from "./actions-builder";
+import { defaultFilter, type FilterProps } from "./actions";
 
-const baseState: StateProps = {
-  ...globalState,
-  tickets: [],
-  page: 1,
-  totalPages: 1,
-  isLoading: false,
-};
+const mockListTicket = vi.fn();
+const mockFilterTicket = vi.fn();
 
-const makeTicket = (id: string) => ({
-  id,
-  recipient: "Test User",
-  document_number: "DOC-001",
-  value: 100,
-  payment_place: "Bank",
-  is_paid: false,
-  is_online: false,
-  expiry_date: new Date("2024-12-01T00:00:00Z"),
-  user: { name: "Admin" },
+vi.stubGlobal("window", {
+  ticket: {
+    listTicket: mockListTicket,
+    filterTicket: mockFilterTicket,
+  },
 });
 
-describe("TicketContext reducers", () => {
-  describe("SET_TICKETS", () => {
-    it("replaces the tickets list", () => {
-      const tickets = [makeTicket("1"), makeTicket("2")];
-      const result = reducers(baseState, {
-        type: actions.SET_TICKETS,
-        payload: tickets,
-      });
-      expect(result?.tickets).toEqual(tickets);
-    });
+const mockResponse = { tickets: [], pages: 1 };
 
-    it("does not mutate other state fields", () => {
-      const result = reducers(baseState, {
-        type: actions.SET_TICKETS,
-        payload: [makeTicket("1")],
-      });
-      expect(result?.page).toBe(baseState.page);
-      expect(result?.totalPages).toBe(baseState.totalPages);
-    });
+beforeEach(() => {
+  vi.clearAllMocks();
+  mockListTicket.mockResolvedValue(mockResponse);
+  mockFilterTicket.mockResolvedValue(mockResponse);
+});
+
+describe("fetchTickets", () => {
+  it("calls listTicket with page and size", async () => {
+    await fetchTickets(2, 50);
+    expect(mockListTicket).toHaveBeenCalledWith({ page: 2, size: 50 });
   });
 
-  describe("REFRESH_TICKETS", () => {
-    it("replaces tickets with refreshed data", () => {
-      const tickets = [makeTicket("99")];
-      const result = reducers(baseState, {
-        type: actions.REFRESH_TICKETS,
-        payload: tickets,
-      });
-      expect(result?.tickets).toEqual(tickets);
-    });
+  it("defaults size to 100", async () => {
+    await fetchTickets(1);
+    expect(mockListTicket).toHaveBeenCalledWith({ page: 1, size: 100 });
   });
 
-  describe("SET_FILTER", () => {
-    it("updates both tickets and filter", () => {
-      const tickets = [makeTicket("5")];
-      const filter: FilterProps = {
-        recipient: "João",
-        type: "paid",
-      };
+  it("returns the response from listTicket", async () => {
+    const response = { tickets: [{ id: "1" }], pages: 3 };
+    mockListTicket.mockResolvedValue(response);
+    const result = await fetchTickets(1);
+    expect(result).toEqual(response);
+  });
+});
 
-      const result = reducers(baseState, {
-        type: actions.SET_FILTER,
-        payload: { tickets, filters: filter },
-      });
-
-      expect(result?.tickets).toEqual(tickets);
-      expect(result?.filter).toEqual(filter);
-    });
+describe("fetchFilteredTickets", () => {
+  it("uses listTicket when filter is empty and type is 'all'", async () => {
+    await fetchFilteredTickets(defaultFilter);
+    expect(mockListTicket).toHaveBeenCalled();
+    expect(mockFilterTicket).not.toHaveBeenCalled();
   });
 
-  describe("SET_PAGE", () => {
-    it("updates the current page", () => {
-      const result = reducers(baseState, {
-        type: actions.SET_PAGE,
-        payload: 3,
-      });
-      expect(result?.page).toBe(3);
-    });
-
-    it("does not affect tickets or totalPages", () => {
-      const result = reducers(baseState, {
-        type: actions.SET_PAGE,
-        payload: 5,
-      });
-      expect(result?.tickets).toEqual(baseState.tickets);
-      expect(result?.totalPages).toBe(baseState.totalPages);
-    });
+  it("uses filterTicket when recipient is set", async () => {
+    const filter: FilterProps = { ...defaultFilter, recipient: "João" };
+    await fetchFilteredTickets(filter);
+    expect(mockFilterTicket).toHaveBeenCalledWith(
+      expect.objectContaining({ recipient: "João" })
+    );
   });
 
-  describe("SET_TOTAL_PAGE", () => {
-    it("updates totalPages", () => {
-      const result = reducers(baseState, {
-        type: actions.SET_TOTAL_PAGE,
-        payload: 10,
-      });
-      expect(result?.totalPages).toBe(10);
-    });
+  it("sets is_paid=true for type 'paid'", async () => {
+    const filter: FilterProps = { ...defaultFilter, type: "paid" };
+    await fetchFilteredTickets(filter);
+    expect(mockFilterTicket).toHaveBeenCalledWith(
+      expect.objectContaining({ is_paid: true })
+    );
   });
 
-  describe("CLEAR_FILTER", () => {
-    it("resets filter to the provided payload", () => {
-      const stateWithFilter: StateProps = {
-        ...baseState,
-        filter: { recipient: "Someone", type: "paid" },
-      };
+  it("sets is_paid=false for type 'unpaid'", async () => {
+    const filter: FilterProps = { ...defaultFilter, type: "unpaid" };
+    await fetchFilteredTickets(filter);
+    expect(mockFilterTicket).toHaveBeenCalledWith(
+      expect.objectContaining({ is_paid: false })
+    );
+  });
 
-      const result = reducers(stateWithFilter, {
-        type: actions.CLEAR_FILTER,
-        payload: globalState.filter,
-      });
+  it("omits is_paid when type is 'all' but other filters are active", async () => {
+    const filter: FilterProps = { ...defaultFilter, recipient: "Test" };
+    await fetchFilteredTickets(filter);
+    const call = mockFilterTicket.mock.calls[0][0];
+    expect(call).not.toHaveProperty("is_paid");
+  });
 
-      expect(result?.filter).toEqual(globalState.filter);
-    });
+  it("excludes undefined and empty string values", async () => {
+    const filter: FilterProps = {
+      ...defaultFilter,
+      document_number: "",
+      is_online: undefined,
+    };
+    await fetchFilteredTickets(filter);
+    expect(mockListTicket).toHaveBeenCalled();
+    expect(mockFilterTicket).not.toHaveBeenCalled();
+  });
+
+  it("passes page and size to filterTicket", async () => {
+    const filter: FilterProps = { ...defaultFilter, recipient: "Test" };
+    await fetchFilteredTickets(filter, 3, 50);
+    expect(mockFilterTicket).toHaveBeenCalledWith(
+      expect.objectContaining({ page: 3, size: 50 })
+    );
   });
 });

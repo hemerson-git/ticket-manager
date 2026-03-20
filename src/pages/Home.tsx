@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Menu } from "../components/Menu";
+import { Filter } from "../components/Filter";
 import { TicketList } from "../components/TicketList";
 import { TicketProvider } from "../contexts/TicketContext";
 
@@ -12,6 +13,7 @@ export function Home() {
     <TicketProvider>
       <div className="p-4">
         <Menu />
+        <Filter />
         <TicketList />
       </div>
     </TicketProvider>

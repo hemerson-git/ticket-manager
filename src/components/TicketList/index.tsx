@@ -11,7 +11,7 @@ import { ReactToPrint } from "../ReactToPrint";
 import { useTickets } from "../../hooks/TicketContext";
 import { Button } from "../Button";
 import { useUserContext } from "../../hooks/UserContext";
-import { globalState } from "../../contexts/TicketContext";
+import { defaultFilter } from "../../contexts/TicketContext";
 // import configs from "../../../configs.json";
 
 export type TicketProps = {
@@ -41,9 +41,9 @@ const priceFormatter = new Intl.NumberFormat("pt-BR", {
 });
 
 export function TicketList() {
-  const { state, actions } = useTickets();
+  const { tickets, filter, page, totalPages, setFilter, setPage, loadTickets } = useTickets();
   const { state: userState } = useUserContext();
-  const TOTAL_PAGES = Array(state.totalPages ?? 1).fill("");
+  const TOTAL_PAGES = Array(totalPages ?? 1).fill("");
 
   const [editModalData, setEditModalData] = useState<TicketProps | null>(null);
   const [deleteModalData, setDeleteModalData] = useState<TicketProps | null>(
@@ -51,11 +51,8 @@ export function TicketList() {
   );
   const [isToastOpen, setIsToastOpen] = useState(false);
   const TOTAL_PRICE =
-    state?.tickets?.length > 0
-      ? state.tickets.reduce(
-          (buffer, ticket) => (buffer += ticket.value / 100),
-          0
-        )
+    tickets?.length > 0
+      ? tickets.reduce((buffer, ticket) => (buffer += ticket.value / 100), 0)
       : 0;
 
   const timerRef = useRef<any>(0);
@@ -70,7 +67,7 @@ export function TicketList() {
 
   async function confirmTicketDelete() {
     await (window as any).ticket.deleteTicket(deleteModalData);
-    actions.setFilter(state.filter, state.page);
+    setFilter(filter, page);
   }
 
   async function handleTogglePayment(ticket: TicketProps & { userId: string }) {
@@ -90,11 +87,11 @@ export function TicketList() {
 
     await (window as any).ticket.editTicket(newTicket);
 
-    if (JSON.stringify(state.filter) !== JSON.stringify(globalState.filter)) {
-      return actions.setFilter(state.filter);
+    if (JSON.stringify(filter) !== JSON.stringify(defaultFilter)) {
+      return setFilter(filter);
     }
 
-    actions.refreshTickets();
+    loadTickets();
   }
 
   async function handleToggleOnline(ticket: TicketProps & { userId: string }) {
@@ -114,7 +111,7 @@ export function TicketList() {
 
     await (window as any).ticket.editTicket(newTicket);
 
-    actions.setFilter(state.filter, state.page);
+    setFilter(filter, page);
   }
 
   async function handleChangePlace(
@@ -154,7 +151,7 @@ export function TicketList() {
     };
 
     await (window as any).ticket.saveTicket(newTicket);
-    actions.setFilter(state.filter, state.page);
+    setFilter(filter, page);
   }
 
   useEffect(() => {
@@ -166,7 +163,7 @@ export function TicketList() {
       <div className="mb-4 flex items-center justify-between px-4">
         <div className="flex flex-1 justify-between pr-4">
           <h1 className="text-lg font-bold ">TicketList</h1>
-          <ReactToPrint tickets={state.tickets} />
+          <ReactToPrint tickets={tickets} />
         </div>
 
         <Dialog.Root modal>
@@ -184,7 +181,7 @@ export function TicketList() {
           </Modal>
         </Dialog.Root>
       </div>
-      {state.tickets?.length ? (
+      {tickets?.length ? (
         <>
           <table border={1} className="border-gray-50 text-sm">
             <thead>
@@ -214,7 +211,7 @@ export function TicketList() {
             <Dialog.Root>
               <AlertDialog.Root>
                 <tbody>
-                  {state.tickets.map((ticket) => {
+                  {tickets.map((ticket) => {
                     const date = dateFormat.format(
                       new Date(ticket.expiry_date)
                     );
@@ -365,8 +362,8 @@ export function TicketList() {
                     flex items-center justify-center bg-purple-400 border h-8 w-8 rounded-md transition all 
                     hover:bg-transparent hover: border-purple-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-purple-400
                   "
-                  disabled={state.page === index + 1}
-                  onClick={() => actions.setPage(index + 1)}
+                  disabled={page === index + 1}
+                  onClick={() => setPage(index + 1)}
                 >
                   {index + 1}
                 </button>

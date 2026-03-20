@@ -5,7 +5,7 @@ import { useTickets } from "../../hooks/TicketContext";
 
 export function FormNewTicket() {
   const { state } = useUserContext();
-  const { actions: ticketActions } = useTickets();
+  const { loadTickets } = useTickets();
 
   const userId = state.user.id;
   const [recipient, setRecipient] = useState("");
@@ -43,7 +43,7 @@ export function FormNewTicket() {
       setIsOnline(false);
       setExpiryDate(new Date().toISOString().slice(0, 10));
 
-      ticketActions.refreshTickets();
+      loadTickets();
     } catch (err) {
       alert("Aconteceu algum erro ao salvar, tente novamente!");
     }
