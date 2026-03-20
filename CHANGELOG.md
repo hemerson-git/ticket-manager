@@ -1,5 +1,25 @@
 # ticket-manager
 
+## 1.15.0
+
+### Minor Changes
+
+- feat(Filter): add payment_place filter field to the filter bar
+
+  feat(Settings): wire items-per-page IPC round-trip — getItemsPerPage/setItemsPerPage handlers read/write configs.json; TicketContext loads the value on mount and passes it as page size so the list respects the setting; saving reloads the ticket list and shows a toast confirmation
+
+### Patch Changes
+
+- fix(Input): show only bottom border (border-b-2) instead of full border; checkboxes show full border with purple fill when checked
+
+  fix(Filter): style selects to match Input underline pattern; filter inputs fill available width equally
+
+  fix(TicketTable): edit dialog not opening on pencil click — onOpenChange now only clears data when dialog closes, not on open
+
+  fix(Modal, AlertDialog): add dark background with opacity and blur (bg-black/60 backdrop-blur-sm) to overlays
+
+  fix(Home): settings modal max width reduced; render toast outside modal to fix viewport stacking context positioning; wrap HomeHeader return in fragment for adjacent JSX
+
 ## 1.14.3
 
 ### Patch Changes
