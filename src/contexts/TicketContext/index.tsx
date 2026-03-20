@@ -9,6 +9,7 @@ import {
 import { TicketProps } from "../../components/TicketList";
 import { FilterProps, defaultFilter } from "./actions";
 import { fetchFilteredTickets } from "./actions-builder";
+import { EditedTicket, Ticket } from "../../types/ticket";
 
 export type { FilterProps };
 export { defaultFilter };
@@ -23,6 +24,8 @@ type TicketContextProps = {
   setFilter: (filter: FilterProps, page?: number) => void;
   clearFilter: () => void;
   setPage: (page: number) => void;
+  deleteTicket: (id: string) => Promise<boolean>;
+  saveTicket: (ticket: EditedTicket) => Promise<Ticket>;
 };
 
 export const TicketContext = createContext({} as TicketContextProps);
@@ -46,6 +49,39 @@ export function TicketProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     }
   }, [filter, page]);
+
+  const saveTicket = async (ticket: EditedTicket) => {
+    const data = ticket;
+
+    if (ticket.id) {
+      const updatedTicket = await window.TICKET.EDIT_TICKET( ticket );
+      setIsLoading(true);
+      await loadTickets();
+      setIsLoading(false);
+      return updatedTicket;
+    }
+
+    const newTicket = await window.TICKET.SAVE_TICKET(data);
+    await loadTickets();
+
+    return newTicket;
+  };
+
+  const deleteTicket = async (id: string) => {
+    setIsLoading(true);
+    const isDeleted = await window.TICKET.DELETE_TICKET({ id});
+
+    console.log("isDeleted", isDeleted);
+
+    if (isDeleted) {
+      await loadTickets();
+      setIsLoading(false);
+      return true;
+    }
+
+    setIsLoading(false);
+    return false;
+  };
 
   useEffect(() => {
     loadTickets();
@@ -71,6 +107,8 @@ export function TicketProvider({ children }: { children: ReactNode }) {
         isLoading,
         loadTickets,
         setFilter,
+        deleteTicket,
+        saveTicket,
         clearFilter,
         setPage: setPageState,
       }}

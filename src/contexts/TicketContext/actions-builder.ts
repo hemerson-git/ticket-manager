@@ -4,7 +4,7 @@ import type { FilterProps } from "./actions";
 type TicketPage = { tickets: TicketProps[]; pages: number };
 
 export async function fetchTickets(page: number, size = 100): Promise<TicketPage> {
-  return (window as any).ticket.listTicket({ page, size });
+  return window.TICKET.LIST_TICKET({ page, size });
 }
 
 export async function fetchFilteredTickets(
@@ -22,10 +22,10 @@ export async function fetchFilteredTickets(
   }
 
   if (type === "all" && !Object.keys(activeParams).length) {
-    return (window as any).ticket.listTicket({ page, size });
+    return window.TICKET.LIST_TICKET({ page, size });
   }
 
-  return (window as any).ticket.filterTicket({
+  return window.TICKET.FILTER_TICKET({
     page,
     size,
     ...(type !== "all" && { is_paid: type === "paid" }),
