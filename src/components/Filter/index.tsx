@@ -65,7 +65,7 @@ export function Filter() {
           placeholder="Beneficiário"
           value={searchParams.get("recipient") || ""}
           onChange={handleChange}
-          className="max-w-[145px] text-sm"
+          className="text-sm"
         />
 
         <Input
@@ -74,7 +74,7 @@ export function Filter() {
           placeholder="Nº do documento"
           value={searchParams.get("document_number") || ""}
           onChange={handleChange}
-          className="max-w-[145px] text-sm"
+          className="text-sm"
         />
 
         <Input
@@ -98,7 +98,7 @@ export function Filter() {
           name="is_online"
           value={searchParams.get("is_online") || ""}
           onChange={handleChange}
-          className="rounded-sm border-b border-purple-500 bg-transparent px-2 py-1 text-sm outline-none"
+          className="border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
         >
           <option value="">Todos</option>
           <option value="on-line">On-line</option>
@@ -109,7 +109,7 @@ export function Filter() {
           name="type"
           value={searchParams.get("type") || "all"}
           onChange={handleChange}
-          className="rounded-sm border-b border-purple-500 bg-transparent px-2 py-1 text-sm outline-none"
+          className="border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
         >
           <option value="all">Todos</option>
           <option value="paid">Pagos</option>
