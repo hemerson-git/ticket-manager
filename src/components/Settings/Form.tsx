@@ -12,6 +12,7 @@ export function Form() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     await window.CONFIGS.SET_ITEMS_PER_PAGE(itemsPerPage);
+    await window.PAGE.RELOAD_WINDOW();
   }
 
   return (

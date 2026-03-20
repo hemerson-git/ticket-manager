@@ -3,14 +3,14 @@ import type { FilterProps } from "./actions";
 
 type TicketPage = { tickets: TicketProps[]; pages: number };
 
-export async function fetchTickets(page: number, size = 100): Promise<TicketPage> {
+export async function fetchTickets(page: number, size: number): Promise<TicketPage> {
   return window.TICKET.LIST_TICKET({ page, size });
 }
 
 export async function fetchFilteredTickets(
   filter: FilterProps,
   page = 1,
-  size = 100
+  size = 20
 ): Promise<TicketPage> {
   const { type, ...rest } = filter;
 

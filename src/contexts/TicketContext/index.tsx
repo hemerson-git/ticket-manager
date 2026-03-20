@@ -36,11 +36,16 @@ export function TicketProvider({ children }: { children: ReactNode }) {
   const [page, setPageState] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+
+  useEffect(() => {
+    window.CONFIGS.GET_ITEMS_PER_PAGE().then(setItemsPerPage);
+  }, []);
 
   const loadTickets = useCallback(async () => {
     setIsLoading(true);
     try {
-      const { tickets: data, pages } = await fetchFilteredTickets(filter, page);
+      const { tickets: data, pages } = await fetchFilteredTickets(filter, page, itemsPerPage);
       setTickets(data);
       setTotalPages(pages);
     } catch (e) {
@@ -48,7 +53,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [filter, page]);
+  }, [filter, page, itemsPerPage]);
 
   const saveTicket = async (ticket: EditedTicket) => {
     const data = ticket;
