@@ -1,86 +1,82 @@
 const { contextBridge, ipcRenderer } = require("electron");
+const ticket = require("./interfaces/ticket.cjs");
+const user = require("./interfaces/user.cjs");
+const database = require("./interfaces/database.cjs");
+const configs = require("./interfaces/configs.cjs");
+const page = require("./interfaces/page.cjs");
+const handlers = require("./interfaces/handlers.cjs");
 
 // Tickets
-contextBridge.exposeInMainWorld("ticket", {
-  saveTicket: async (data) => {
-    const res = await ipcRenderer.invoke("saveTicket", data);
-    return res;
+contextBridge.exposeInMainWorld(handlers.ticket.title, {
+  [ticket.saveTicket]: async (data) => {
+    return await ipcRenderer.invoke(ticket.saveTicket, data);
   },
 
-  listTicket: async (data) => {
-    const res = await ipcRenderer.invoke("listTicket", data);
-    return res;
+  [ticket.listTicket]: async (data) => {
+    return await ipcRenderer.invoke(ticket.listTicket, data);
   },
 
-  editTicket: async (data) => {
-    const res = await ipcRenderer.invoke("editTicket", data);
-    return res;
+  [ticket.editTicket]: async (data) => {
+    return await ipcRenderer.invoke(ticket.editTicket, data);
   },
 
-  deleteTicket: async (data) => {
-    await ipcRenderer.invoke("deleteTicket", data);
+  [ticket.deleteTicket]: async (data) => {
+    return await ipcRenderer.invoke(ticket.deleteTicket, data);
   },
 
-  filterTicket: async (data) => {
-    const res = await ipcRenderer.invoke("filterTicket", data);
-    return res;
+  [ticket.filterTicket]: async (data) => {
+    return await ipcRenderer.invoke(ticket.filterTicket, data);
   },
 
-  getTotalTickets: async () => {
-    const res = await ipcRenderer.invoke("getTotalTickets");
-    return res;
-  },
-});
-
-// Page
-contextBridge.exposeInMainWorld("page", {
-  reloadWindow: async () => {
-    await ipcRenderer.invoke("reloadWindow");
-  },
-});
-
-// Database
-contextBridge.exposeInMainWorld("database", {
-  exportDatabase: async () => {
-    await ipcRenderer.invoke("exportDatabase");
-  },
-
-  importDatabase: async () => {
-    const resp = await ipcRenderer.invoke("importDatabase");
-    return resp;
+  [ticket.getTotalTickets]: async () => {
+    return await ipcRenderer.invoke(ticket.getTotalTickets);
   },
 });
 
 // User
-contextBridge.exposeInMainWorld("user", {
-  signIn: async (data) => {
-    const resp = await ipcRenderer.invoke("signIn", data);
-    return resp;
+contextBridge.exposeInMainWorld(handlers.user.title, {
+  [user.signIn]: async (data) => {
+    return await ipcRenderer.invoke(user.signIn, data);
   },
 
-  isFirstUser: async () => {
-    return await ipcRenderer.invoke("isFirstUser");
+  [user.isFirstUser]: async () => {
+    return await ipcRenderer.invoke(user.isFirstUser);
   },
 });
 
-contextBridge.exposeInMainWorld("config", {
-  setDefaultPass: async (data) => {
-    const resp = await ipcRenderer.invoke("setDefaultPass", data);
-    return resp;
+// Database
+contextBridge.exposeInMainWorld(handlers.database.title, {
+  [database.exportDatabase]: async () => {
+    return await ipcRenderer.invoke(database.exportDatabase);
   },
 
-  comparePass: async (data) => {
-    const resp = await ipcRenderer.invoke("comparePass", data);
-    return resp;
+  [database.importDatabase]: async () => {
+    return await ipcRenderer.invoke(database.importDatabase);
+  },
+});
+
+// Configs
+contextBridge.exposeInMainWorld(handlers.configs.title, {
+  [configs.setDefaultPass]: async (data) => {
+    return await ipcRenderer.invoke(configs.setDefaultPass, data);
   },
 
-  hasDefaultPass: async (data) => {
-    const resp = await ipcRenderer.invoke("hasDefaultPass", data);
-    return resp;
+  [configs.comparePass]: async (data) => {
+    return await ipcRenderer.invoke(configs.comparePass, data);
   },
 
-  changePass: async (data) => {
-    const resp = await ipcRenderer.invoke("changePass", data);
-    return resp;
+  [configs.hasDefaultPass]: async (data) => {
+    return await ipcRenderer.invoke(configs.hasDefaultPass, data);
+  },
+
+  [configs.changePass]: async (data) => {
+    return await ipcRenderer.invoke(configs.changePass, data);
+  },
+});
+
+// Page
+contextBridge.exposeInMainWorld(handlers.page.title, {
+  [page.reloadWindow]: async () => {
+    return await ipcRenderer.invoke(page.reloadWindow);
   },
 });
