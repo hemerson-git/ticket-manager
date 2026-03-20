@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.11.2
+
+### Patch Changes
+
+- Replace Google sign-in with default password screen as app entry point. Fix Prisma client regeneration and signIn race condition with upsert. Update AlertModal to match reference design with children-based action API.
+
 ## 1.11.1
 
 ### Patch Changes
