@@ -147,8 +147,8 @@ export function TicketTable() {
                         </Table.button>
                       </AlertDialog.Trigger>
                       <AlertDialog.Portal>
-                        <AlertDialog.Overlay className="fixed inset-0 bg-black/50" />
-                        <AlertDialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] rounded-lg bg-zinc-800 p-6 shadow-xl">
+                        <AlertDialog.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+                        <AlertDialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] rounded-lg bg-zinc-800 p-6 shadow-xl text-zinc-100">
                           <AlertDialog.Title className="mb-2 text-lg font-bold">
                             Deletar boleto?
                           </AlertDialog.Title>
