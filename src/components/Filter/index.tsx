@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { useTickets } from "../../hooks/TicketContext";
 import type { FilterProps } from "../../contexts/TicketContext";
+import { Input } from "../Input";
 
 function parseParams(params: URLSearchParams): FilterProps {
   const isOnlineParam = params.get("is_online");
@@ -59,38 +60,38 @@ export function Filter() {
   return (
     <div className="flex items-center justify-between gap-3 px-3 py-2">
       <div className="flex items-center gap-3 flex-wrap">
-        <input
+        <Input
           name="recipient"
           placeholder="Beneficiário"
           value={searchParams.get("recipient") || ""}
           onChange={handleChange}
-          className="max-w-[145px] rounded-sm border-b border-purple-500 bg-transparent px-2 py-1 text-sm outline-none"
+          className="max-w-[145px] text-sm"
         />
 
-        <input
+        <Input
           type="number"
           name="document_number"
           placeholder="Nº do documento"
           value={searchParams.get("document_number") || ""}
           onChange={handleChange}
-          className="max-w-[145px] rounded-sm border-b border-purple-500 bg-transparent px-2 py-1 text-sm outline-none"
+          className="max-w-[145px] text-sm"
         />
 
-        <input
+        <Input
           type="date"
           name="expiry_date"
           value={searchParams.get("expiry_date") || ""}
           onChange={handleChange}
-          className="rounded-sm border-b border-purple-500 bg-transparent px-2 py-1 text-sm outline-none"
+          className="text-sm"
         />
 
-        <input
+        <Input
           type="date"
           name="limite_expire_date"
           value={hasExpiry ? searchParams.get("limite_expire_date") || "" : ""}
           onChange={handleChange}
           disabled={!hasExpiry}
-          className="rounded-sm border-b border-purple-500 bg-transparent px-2 py-1 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-30"
+          className="text-sm disabled:cursor-not-allowed disabled:opacity-30"
         />
 
         <select
