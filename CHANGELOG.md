@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.12.0
+
+### Minor Changes
+
+- Add URL-param Filter component and refactor TicketContext to useState
+
 ## 1.11.2
 
 ### Patch Changes
