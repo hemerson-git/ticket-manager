@@ -4,25 +4,25 @@ const z = require("zod");
 const saveTicketHandler = async (event, data) => {
   const {
     recipient,
-    ticketNumber,
-    ticketValue,
-    paymentPlace,
-    isPaid,
-    isOnline,
-    expiryDate,
+    document_number,
+    value,
+    payment_place,
+    is_paid,
+    is_online,
+    expiry_date,
     userId,
   } = data;
 
   try {
     const newTicket = await prisma.ticket.create({
       data: {
-        document_number: ticketNumber,
-        expiry_date: new Date(expiryDate),
-        payment_place: paymentPlace,
+        document_number,
+        expiry_date: new Date(expiry_date),
+        payment_place,
         recipient,
-        value: ticketValue,
-        is_paid: isPaid,
-        is_online: isOnline,
+        value,
+        is_paid,
+        is_online,
         userId,
       },
     });
@@ -37,24 +37,24 @@ const editTicketHandler = async (event, data) => {
   const { id } = data;
   const dataSchema = z.object({
     recipient: z.string(),
-    ticketNumber: z.string(),
-    ticketValue: z.number(),
-    paymentPlace: z.string(),
-    isPaid: z.boolean(),
-    isOnline: z.boolean(),
-    expiryDate: z.string(),
+    document_number: z.string(),
+    value: z.number(),
+    payment_place: z.string(),
+    is_paid: z.boolean(),
+    is_online: z.boolean(),
+    expiry_date: z.string(),
     userId: z.string(),
   });
 
   const {
-    expiryDate,
-    isPaid,
-    paymentPlace,
+    expiry_date,
+    is_paid,
+    payment_place,
     recipient,
-    ticketNumber,
-    ticketValue,
-    userId,
-    isOnline,
+    document_number,
+    value,
+    userId: user_id,
+    is_online,
   } = dataSchema.parse(data);
 
   try {
@@ -69,14 +69,14 @@ const editTicketHandler = async (event, data) => {
         id,
       },
       data: {
-        document_number: ticketNumber,
-        expiry_date: new Date(expiryDate),
-        is_paid: isPaid,
-        is_online: isOnline,
-        payment_place: paymentPlace,
+        document_number,
+        expiry_date: new Date(expiry_date),
+        is_paid,
+        is_online,
+        payment_place,
         recipient,
-        value: ticketValue,
-        userId,
+        value,
+        userId: user_id,
       },
     });
 
@@ -102,11 +102,13 @@ const deleteTicketHandler = async (event, data) => {
 
     if (!ticket) return { message: "Erro ao deletar boleto!" };
 
-    await prisma.ticket.delete({
+    const deletedTicket = await prisma.ticket.delete({
       where: {
         id,
       },
     });
+
+    return !!deletedTicket;
   } catch (err) {
     return err;
   }
