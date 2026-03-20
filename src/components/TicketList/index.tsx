@@ -1,5 +1,6 @@
 import { useTickets } from "../../hooks/TicketContext";
 import { TicketTable } from "../TicketTable";
+import { Button } from "../Button";
 
 export type TicketProps = {
   id: string;
@@ -38,17 +39,15 @@ export function TicketList() {
           <footer className="flex items-center justify-center gap-2 mt-4">
             {TOTAL_PAGES.length > 1 &&
               TOTAL_PAGES.map((_, index) => (
-                <button
+                <Button
                   key={index}
-                  className="
-                    flex items-center justify-center bg-purple-400 border h-8 w-8 rounded-md transition-all
-                    hover:bg-transparent hover:border-purple-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-purple-400
-                  "
+                  className="h-8 w-8 justify-center px-0 py-0"
+                  variant={page === index + 1 ? "danger" : "primary"}
                   disabled={page === index + 1}
                   onClick={() => setPage(index + 1)}
                 >
                   {index + 1}
-                </button>
+                </Button>
               ))}
           </footer>
         </>

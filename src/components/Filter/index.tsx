@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router-dom";
 import { useTickets } from "../../hooks/TicketContext";
 import type { FilterProps } from "../../contexts/TicketContext";
 import { Input } from "../Input";
+import { Button } from "../Button";
 
 function parseParams(params: URLSearchParams): FilterProps {
   const isOnlineParam = params.get("is_online");
@@ -126,12 +127,9 @@ export function Filter() {
         </select>
       </div>
 
-      <button
-        onClick={handleClear}
-        className="text-sm text-zinc-400 hover:text-white transition-colors"
-      >
+      <Button variant="ghost" onClick={handleClear} className="text-sm">
         Limpar
-      </button>
+      </Button>
     </div>
   );
 }
