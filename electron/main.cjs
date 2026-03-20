@@ -34,53 +34,58 @@ if (process.defaultApp) {
 
 let win;
 
-const createWindow = async () => {
-  await app.whenReady();
-  win = new BrowserWindow({
+async function createWindow() {
+  const win = new BrowserWindow({
     width: 1200,
-    height: 600,
-    minWidth: 900,
-    minHeight: 600,
+    height: 800,
     webPreferences: {
-      preload: path.join(__dirname, "preload.cjs"),
       nodeIntegration: true,
+      preload: path.join(__dirname, "preload.cjs"),
     },
-    backgroundMaterial: "acrylic",
     autoHideMenuBar: true,
   });
 
-  // win.loadURL("http://localhost:5173");
-  // win.webContents.openDevTools();
-  // win.loadFile("./dist/index.html");
-  if (isDev) {
-    win.loadURL("http://localhost:5179");
+  app.setAppUserModelId("com.squirrel.AppName.AppName");
+
+  // In development, load from the Vite dev server
+  if (!app.isPackaged) {
+    // Wait for Vite dev server to be ready
+    let tries = 0;
+    const maxTries = 20;
+    const tryLoad = async () => {
+      try {
+        await win.loadURL("http://localhost:5173");
+        win.webContents.openDevTools();
+      } catch (err) {
+        tries++;
+        if (tries < maxTries) {
+          console.log(
+            `Retrying to connect to Vite dev server... (${tries}/${maxTries})`
+          );
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          await tryLoad();
+        } else {
+          console.error("Failed to connect to Vite dev server:", err);
+        }
+      }
+    };
+
+    await tryLoad();
   } else {
-    win.loadFile(path.join(app.getAppPath(), "dist/index.html"));
+    // win.setMenu(null);
+    win.loadFile(path.join(__dirname, "dist", "index.html"));
   }
-};
-
-const gotTheLock = app.requestSingleInstanceLock();
-
-if (!gotTheLock) {
-  app.quit();
-} else {
-  app.on("second-instance", (event, commandLine, workingDirectory) => {
-    // Someone tried to run a second instance, we should focus our window.
-    if (win) {
-      if (win.isMinimized()) win.restore();
-      win.focus();
-    }
-    // // the commandLine is array of strings in which last element is deep link url
-    // dialog.showErrorBox(
-    //   "Welcome Back",
-    //   `You arrived from: ${commandLine.pop()}`
-    // );
-  });
-
-  app.whenReady().then(() => {
-    createWindow();
-  });
 }
+
+app.whenReady().then(async () => {
+  await createWindow();
+
+  app.on("activate", async () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      await createWindow();
+    }
+  });
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -88,11 +93,29 @@ app.on("window-all-closed", () => {
   }
 });
 
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-});
+// const gotTheLock = app.requestSingleInstanceLock();
+
+// if (!gotTheLock) {
+//   app.quit();
+// } else {
+//   app.on("second-instance", (event, commandLine, workingDirectory) => {
+//     // Someone tried to run a second instance, we should focus our window.
+//     if (win) {
+//       if (win.isMinimized()) win.restore();
+//       win.focus();
+//     }
+//     // // the commandLine is array of strings in which last element is deep link url
+//     // dialog.showErrorBox(
+//     //   "Welcome Back",
+//     //   `You arrived from: ${commandLine.pop()}`
+//     // );
+//   });
+
+//   app.whenReady().then(() => {
+//     createWindow();
+//   });
+// }
+
 
 // Ticket
 ipcMain.handle("getTotalTickets", () => getTotalTickets());

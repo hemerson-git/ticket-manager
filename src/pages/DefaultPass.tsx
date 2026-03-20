@@ -38,7 +38,7 @@ export function DefaultPass() {
     const resp = await (window as any).config.comparePass(pass);
 
     if (resp) {
-      navigate("/sign-in");
+      navigate("/home");
       return;
     }
 

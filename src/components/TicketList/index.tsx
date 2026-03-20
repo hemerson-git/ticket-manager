@@ -208,7 +208,6 @@ export function TicketList() {
                 </td>
                 <td className="whitespace-nowrap px-4 font-bold">Pago</td>
                 <td className="whitespace-nowrap px-4 font-bold">Online</td>
-                <td className="whitespace-nowrap px-4 font-bold">Autor</td>
               </tr>
             </thead>
 
@@ -327,10 +326,6 @@ export function TicketList() {
                               className="rounded-sm text-purple-500"
                             />
                           </div>
-                        </td>
-
-                        <td className="max-w-[124px] overflow-hidden text-ellipsis whitespace-nowrap px-4">
-                          {ticket.user.name}
                         </td>
                       </tr>
                     );
