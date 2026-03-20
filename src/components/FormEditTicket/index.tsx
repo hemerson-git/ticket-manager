@@ -1,4 +1,5 @@
 import { Input } from "../Input";
+import { Button } from "../Button";
 import { TicketProps } from "../TicketList";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -37,7 +38,6 @@ export function FormEditTicket({ ticket }: Props) {
   const { saveTicket } = useTickets();
 
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors },
@@ -128,30 +128,38 @@ export function FormEditTicket({ ticket }: Props) {
         />
 
         <div className="flex items-center justify-start gap-4">
-          <Input
-            type="checkbox"
-            id="is_paid"
-            label="Pago"
-            {...register("is_paid")}
+          <Controller
+            name="is_paid"
+            control={control}
+            render={({ field }) => (
+              <Input
+                type="checkbox"
+                id="is_paid"
+                label="Pago"
+                checked={field.value}
+                onChange={(e) => field.onChange(e.target.checked)}
+              />
+            )}
           />
 
-          <Input
-            type="checkbox"
-            id="is_online"
-            label="Online"
-            {...register("is_online")}
+          <Controller
+            name="is_online"
+            control={control}
+            render={({ field }) => (
+              <Input
+                type="checkbox"
+                id="is_online"
+                label="Online"
+                checked={field.value}
+                onChange={(e) => field.onChange(e.target.checked)}
+              />
+            )}
           />
         </div>
       </div>
 
       <footer className="mt-10 flex items-center justify-center">
-        <button
-          type="submit"
-          className="flex items-center gap-2 rounded-sm border border-purple-400 px-4 py-1 
-              transition-colors hover:bg-purple-500 hover:text-white"
-        >
-          Salvar Boleto
-        </button>
+        <Button type="submit">Salvar Boleto</Button>
       </footer>
     </form>
   );
