@@ -156,10 +156,15 @@ export function ReactToPrint({ tickets }: Props) {
                     <td className="border border-zinc-900 font-bold">Total</td>
                     <td colSpan={2}>
                       {priceFormatter.format(
-                        tickets.reduce(
+                        (PRINTABLE_TICKETS.reduce(
                           (buffer, ticket) => buffer + ticket.value,
                           0
-                        ) / 100
+                        ) +
+                          ONLINE_TICKETS.reduce(
+                            (buffer, ticket) => buffer + ticket.value,
+                            0
+                          )) /
+                          100
                       )}
                     </td>
                   </tr>

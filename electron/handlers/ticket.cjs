@@ -159,87 +159,57 @@ const listTicketHandler = async (event, data) => {
 
 const filterTicketHandler = async (event, data) => {
   const dataSchema = z.object({
-    is_paid: z.boolean().nullable(),
-    recipient: z.string(),
-    document_number: z.string(),
-    is_online: z.boolean().nullable(),
-    expiry_date: z.date(),
-    limite_expire_date: z.date().nullable(),
+    is_paid: z.boolean().optional(),
+    recipient: z.string().optional(),
+    document_number: z.string().optional(),
+    is_online: z.boolean().optional(),
+    expiry_date: z.coerce.date().optional(),
+    limite_expire_date: z.coerce.date().optional(),
     page: z.number().positive().optional(),
     size: z.number().positive().optional(),
   });
 
   try {
-    const tickets = await prisma.ticket.findMany({
-      orderBy: [
-        {
-          expiry_date: "desc",
-        },
-        {
-          document_number: "asc",
-        },
-      ],
+    const {
+      is_paid,
+      recipient,
+      document_number,
+      is_online,
+      expiry_date,
+      limite_expire_date,
+      page = 1,
+      size = 100,
+    } = dataSchema.parse(data);
 
-      take: data.size || 100,
-      skip: (data.page - 1 || 0) * (data.size || 100),
+    function getDateFilter() {
+      if (!expiry_date) return undefined;
+      if (limite_expire_date) return { gte: expiry_date, lte: limite_expire_date };
+      return { equals: expiry_date };
+    }
 
-      where: {
-        is_paid: {
-          equals: data.is_paid,
-        },
-        recipient: {
-          contains: data.recipient,
-        },
-        document_number: {
-          contains: data.document_number,
-        },
-        is_online: {
-          equals: data.is_online,
-        },
-        expiry_date: {
-          gte: data.expiry_date,
-          lte: data.limite_expire_date ?? data.expiry_date,
-        },
-      },
+    const where = {
+      ...(recipient && { recipient: { startsWith: recipient } }),
+      ...(document_number && { document_number: { startsWith: document_number } }),
+      ...(is_online !== undefined && { is_online: { equals: is_online } }),
+      ...(is_paid !== undefined && { is_paid: { equals: is_paid } }),
+      expiry_date: getDateFilter(),
+    };
 
-      include: {
-        user: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
+    const [tickets, totalTickets] = await Promise.all([
+      prisma.ticket.findMany({
+        where,
+        orderBy: [{ expiry_date: "desc" }, { document_number: "asc" }],
+        take: size,
+        skip: (page - 1) * size,
+        include: { user: { select: { name: true } } },
+      }),
+      prisma.ticket.count({ where }),
+    ]);
 
-    const totalTickets = await prisma.ticket.count({
-      where: {
-        is_paid: {
-          equals: data.is_paid,
-        },
-        recipient: {
-          contains: data.recipient,
-        },
-        document_number: {
-          contains: data.document_number,
-        },
-        is_online: {
-          equals: data.is_online,
-        },
-        expiry_date: {
-          gte: data.expiry_date,
-          lte: data.limite_expire_date ?? data.expiry_date,
-        },
-      },
-    });
-
-    const totalPages = Math.ceil(totalTickets / data.size ?? 100);
-
-    return { tickets, pages: totalPages };
+    return { tickets, pages: Math.ceil(totalTickets / size) };
   } catch (e) {
     console.log(e);
-    return {
-      message: "Sorry, something went wrong. Please try again!",
-    };
+    return { message: "Sorry, something went wrong. Please try again!" };
   }
 };
 
