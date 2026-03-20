@@ -123,7 +123,7 @@ export function TicketTable() {
 
         <Dialog.Root
           open={Boolean(editModalData)}
-          onOpenChange={() => setEditModalData(null)}
+          onOpenChange={(open) => { if (!open) setEditModalData(null); }}
         >
           <tbody>
             {tickets.map((ticket, index) => {
