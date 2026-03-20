@@ -46,7 +46,7 @@ function HomeHeader() {
         </Dialog.Root>
 
         <Dialog.Root>
-          <Modal title="Configurações">
+          <Modal title="Configurações" className="min-w-0 w-[300px]">
             <Settings />
           </Modal>
           <Dialog.Trigger asChild>
