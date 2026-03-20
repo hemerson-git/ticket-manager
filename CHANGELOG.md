@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.2
+
+### Patch Changes
+
+- refactor(buttons): replace all raw button elements with Button component across Filter, FormNewTicket, ReactToPrint, TicketList pagination, and SignIn; add ghost variant for borderless utility actions
+
 ## 1.15.1
 
 ### Patch Changes
