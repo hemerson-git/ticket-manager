@@ -32,7 +32,7 @@ function HomeHeader() {
     if (resp) location.reload();
   }
 
-  return (
+  return (<>
     <Header.wrapper title="Boletos">
       <Header.navigation>
         <ReactToPrint tickets={tickets} />
@@ -82,7 +82,7 @@ function HomeHeader() {
       isOpen={settingsToast}
       onOpenChange={setSettingsToast}
     />
-  );
+  </>);
 }
 
 export function Home() {
