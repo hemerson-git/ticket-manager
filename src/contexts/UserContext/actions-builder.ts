@@ -16,6 +16,7 @@ export const buildActions = (dispatch: any) => {
     signOut: () => {
       localStorage.removeItem("@ticket_manager_user");
       dispatch({ type: actions.SIGN_OUT });
+      window.location.hash = "/";
     },
   };
 };

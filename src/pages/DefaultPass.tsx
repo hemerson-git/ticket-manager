@@ -6,12 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { FieldValues, useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useUserContext } from "../hooks/UserContext";
 
 export function DefaultPass() {
   const [pass, setPass] = useState("");
   const [isPassVisible, setIsPassVisible] = useState(false);
   const [hasPass, setHasPass] = useState(false);
   const navigate = useNavigate();
+  const { action } = useUserContext();
 
   const passSchema = z
     .object({
@@ -38,12 +40,13 @@ export function DefaultPass() {
     const resp = await window.CONFIGS.COMPARE_PASS(pass);
 
     if (resp) {
+      await action.signIn();
       navigate("/home");
       return;
     }
 
     alert("Senha Inválida");
-  }, [pass, navigate]);
+  }, [pass, navigate, action]);
 
   useEffect(() => {
     function keyVerify(e: KeyboardEvent) {

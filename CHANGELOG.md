@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.15
+
+### Patch Changes
+
+- fix(auth): call signIn before navigating to home so user component renders immediately; fix signOut to redirect to DefaultPass screen
+
 ## 1.15.14
 
 ### Patch Changes

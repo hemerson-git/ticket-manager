@@ -1,7 +1,7 @@
 {
   "name": "ticket-manager",
   "private": true,
-  "version": "1.15.14",
+  "version": "1.15.15",
   "type": "module",
   "main": "electron/main.cjs",
   "author": {
