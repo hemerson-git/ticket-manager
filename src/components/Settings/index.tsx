@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Form } from "./Form";
 
 type Props = {
@@ -6,10 +5,5 @@ type Props = {
 };
 
 export function Settings({ onSaved }: Props) {
-  return (
-    <div>
-      <Form onSaved={onSaved} />
-      <Link to="/change-pass">Change Password</Link>
-    </div>
-  );
+  return <Form onSaved={onSaved} />;
 }

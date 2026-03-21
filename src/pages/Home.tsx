@@ -3,9 +3,12 @@ import {
   Export,
   GearSix,
   Plus,
+  Password,
 } from "phosphor-react";
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { Filter } from "../components/Filter";
 import { TicketList } from "../components/TicketList";
@@ -25,7 +28,9 @@ type PendingAction = "export" | "import" | null;
 function HomeHeader() {
   const { tickets } = useTickets();
   const { state: userState, action } = useUserContext();
+  const navigate = useNavigate();
   const [settingsToast, setSettingsToast] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -72,15 +77,38 @@ function HomeHeader() {
           </Dialog.Trigger>
         </Dialog.Root>
 
-        <Dialog.Root>
-          <Modal title="Configurações" className="min-w-0 w-[140px]">
-            <Settings onSaved={() => setSettingsToast(true)} />
-          </Modal>
-          <Dialog.Trigger asChild>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
             <Header.button title="Configurações">
               <GearSix size={16} />
             </Header.button>
-          </Dialog.Trigger>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              align="end"
+              sideOffset={8}
+              className="z-50 min-w-[160px] rounded-md bg-zinc-800 p-1 shadow-xl border border-zinc-700 text-zinc-100 text-sm"
+            >
+              <DropdownMenu.Item
+                onSelect={() => setTimeout(() => setSettingsOpen(true), 0)}
+                className="flex items-center gap-2 px-3 py-2 rounded cursor-pointer outline-none hover:bg-zinc-700 select-none"
+              >
+                <GearSix size={14} /> Configurações
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                onSelect={() => navigate("/change-pass")}
+                className="flex items-center gap-2 px-3 py-2 rounded cursor-pointer outline-none hover:bg-zinc-700 select-none"
+              >
+                <Password size={14} /> Alterar Senha
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+
+        <Dialog.Root open={settingsOpen} onOpenChange={setSettingsOpen}>
+          <Modal title="Configurações" className="min-w-0 w-[200px]">
+            <Settings onSaved={() => { setSettingsOpen(false); setSettingsToast(true); }} />
+          </Modal>
         </Dialog.Root>
 
         <Header.button onClick={() => handleOpenPasswordDialog("export")} title="Exportar banco de dados">
