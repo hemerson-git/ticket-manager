@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.8
+
+### Patch Changes
+
+- fix(Modal): increase padding from p-4 pb-2 to p-6 so content doesn't sit tight against borders; feat(Home): require password before export/import database — show password dialog, verify via COMPARE_PASS before calling IPC; fix(vite): restore HMR by scoping base:./ to production builds only and enable usePolling for WSL2 compatibility
+
 ## 1.15.7
 
 ### Patch Changes
