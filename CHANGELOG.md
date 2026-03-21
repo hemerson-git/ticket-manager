@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.13
+
+### Patch Changes
+
+- fix(Modal): replace min-w-[50vw] with min-w-[200px] to allow narrower dialogs; set config dialogs to w-[300px]
+
 ## 1.15.12
 
 ### Patch Changes

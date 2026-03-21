@@ -116,13 +116,13 @@ function HomeHeader() {
         </DropdownMenu.Root>
 
         <Dialog.Root open={settingsOpen} onOpenChange={setSettingsOpen}>
-          <Modal title="Configurações" className="min-w-0 w-[200px]">
+          <Modal title="Configurações" className="min-w-0 w-[300px]">
             <Settings onSaved={() => { setSettingsOpen(false); setSettingsToast(true); }} />
           </Modal>
         </Dialog.Root>
 
         <Dialog.Root open={changePassOpen} onOpenChange={setChangePassOpen}>
-          <Modal title="Alterar Senha" className="min-w-0 w-[320px]">
+          <Modal title="Alterar Senha" className="min-w-0 w-[300px]">
             <ChangePassForm
               onSaved={() => { setChangePassOpen(false); setChangePassToast(true); }}
             />
