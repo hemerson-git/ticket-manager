@@ -1,5 +1,21 @@
 # ticket-manager
 
+## 1.15.11
+
+### Patch Changes
+
+- fix(Input): display error message below input instead of overlapping border
+
+  Also replace change password page navigation with a dialog opened from the settings dropdown menu.
+
+## 1.15.10
+
+### Patch Changes
+
+- fix(Home): defer settings dialog open to resolve focus trap after DropdownMenu closes
+
+  Replace settings gear button with DropdownMenu containing "Configurações" and "Alterar Senha" items. Use setTimeout deferral when opening the settings Dialog from DropdownMenu.Item so Radix DismissableLayer fully cleans up before the dialog mounts, preventing focus trap that blocked all UI interaction.
+
 ## 1.15.9
 
 ### Patch Changes

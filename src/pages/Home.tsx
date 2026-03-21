@@ -8,7 +8,6 @@ import {
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { Filter } from "../components/Filter";
 import { TicketList } from "../components/TicketList";
@@ -19,6 +18,7 @@ import { ReactToPrint } from "../components/ReactToPrint";
 import { Toast } from "../components/Toast";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
+import { ChangePassForm } from "../components/ChangePassForm";
 import { TicketProvider } from "../contexts/TicketContext";
 import { useTickets } from "../hooks/TicketContext";
 import { useUserContext } from "../hooks/UserContext";
@@ -28,9 +28,10 @@ type PendingAction = "export" | "import" | null;
 function HomeHeader() {
   const { tickets } = useTickets();
   const { state: userState, action } = useUserContext();
-  const navigate = useNavigate();
   const [settingsToast, setSettingsToast] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [changePassOpen, setChangePassOpen] = useState(false);
+  const [changePassToast, setChangePassToast] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -96,7 +97,7 @@ function HomeHeader() {
                 <GearSix size={14} /> Configurações
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                onSelect={() => navigate("/change-pass")}
+                onSelect={() => setTimeout(() => setChangePassOpen(true), 0)}
                 className="flex items-center gap-2 px-3 py-2 rounded cursor-pointer outline-none hover:bg-zinc-700 select-none"
               >
                 <Password size={14} /> Alterar Senha
@@ -108,6 +109,14 @@ function HomeHeader() {
         <Dialog.Root open={settingsOpen} onOpenChange={setSettingsOpen}>
           <Modal title="Configurações" className="min-w-0 w-[200px]">
             <Settings onSaved={() => { setSettingsOpen(false); setSettingsToast(true); }} />
+          </Modal>
+        </Dialog.Root>
+
+        <Dialog.Root open={changePassOpen} onOpenChange={setChangePassOpen}>
+          <Modal title="Alterar Senha" className="min-w-0 w-[320px]">
+            <ChangePassForm
+              onSaved={() => { setChangePassOpen(false); setChangePassToast(true); }}
+            />
           </Modal>
         </Dialog.Root>
 
@@ -154,6 +163,13 @@ function HomeHeader() {
       description="Items por página atualizado!"
       isOpen={settingsToast}
       onOpenChange={setSettingsToast}
+    />
+
+    <Toast
+      title="Senha"
+      description="Senha alterada com sucesso!"
+      isOpen={changePassToast}
+      onOpenChange={setChangePassToast}
     />
   </>);
 }
