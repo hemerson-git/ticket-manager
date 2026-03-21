@@ -1,31 +1,41 @@
-const { dialog, app } = require("electron");
+const { dialog, app, BrowserWindow } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const { prisma } = require("../lib/prisma.cjs");
 
 const getDbPath = () =>
   app.isPackaged
     ? path.join(process.resourcesPath, "prisma", "dev.db")
     : path.join(__dirname, "..", "..", "prisma", "dev.db");
 
-const exportDatabase = async () => {
+const exportDatabase = async (event) => {
   try {
-    const file = await dialog.showSaveDialog({
+    const win = BrowserWindow.fromWebContents(event.sender);
+
+    const file = await dialog.showSaveDialog(win, {
       filters: [{ name: "Database", extensions: ["DB"] }],
       properties: ["showOverwriteConfirmation", "createDirectory"],
       buttonLabel: "Exportar",
     });
 
-    if (file.canceled) return;
+    if (file.canceled || !file.filePath) return false;
 
-    await fs.promises.copyFile(getDbPath(), file.filePath.toString());
+    // Use VACUUM INTO to create a consistent backup of the live database
+    const destPath = file.filePath.toString().replace(/\\/g, "/");
+    await prisma.$executeRawUnsafe(`VACUUM INTO '${destPath.replace(/'/g, "''")}'`);
+
+    return true;
   } catch (e) {
-    console.log("error: " + e.message);
+    console.log("exportDatabase error: " + e.message);
+    return false;
   }
 };
 
-const importDatabase = async () => {
+const importDatabase = async (event) => {
   try {
-    const file = await dialog.showOpenDialog({
+    const win = BrowserWindow.fromWebContents(event.sender);
+
+    const file = await dialog.showOpenDialog(win, {
       filters: [{ name: "Database", extensions: ["DB"] }],
       buttonLabel: "Importar",
       properties: ["openFile"],
@@ -40,12 +50,15 @@ const importDatabase = async () => {
       await fs.promises.mkdir(destDir, { recursive: true });
     }
 
+    // Disconnect Prisma before replacing the database file to avoid file lock
+    await prisma.$disconnect();
+
     await fs.promises.copyFile(file.filePaths[0], destPath);
 
     console.log(`${file.filePaths[0]} copied to ${destPath}`);
     return true;
   } catch (error) {
-    console.log(error);
+    console.log("importDatabase error: " + error.message);
     return false;
   }
 };
