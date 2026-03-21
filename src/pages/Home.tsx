@@ -4,6 +4,7 @@ import {
   GearSix,
   Plus,
   Password,
+  Info,
 } from "phosphor-react";
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -19,6 +20,7 @@ import { Toast } from "../components/Toast";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { ChangePassForm } from "../components/ChangePassForm";
+import { About } from "../components/About";
 import { TicketProvider } from "../contexts/TicketContext";
 import { useTickets } from "../hooks/TicketContext";
 import { useUserContext } from "../hooks/UserContext";
@@ -32,6 +34,7 @@ function HomeHeader() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [changePassOpen, setChangePassOpen] = useState(false);
   const [changePassToast, setChangePassToast] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -102,6 +105,12 @@ function HomeHeader() {
               >
                 <Password size={14} /> Alterar Senha
               </DropdownMenu.Item>
+              <DropdownMenu.Item
+                onSelect={() => setTimeout(() => setAboutOpen(true), 0)}
+                className="flex items-center gap-2 px-3 py-2 rounded cursor-pointer outline-none hover:bg-zinc-700 select-none"
+              >
+                <Info size={14} /> Sobre
+              </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
@@ -117,6 +126,12 @@ function HomeHeader() {
             <ChangePassForm
               onSaved={() => { setChangePassOpen(false); setChangePassToast(true); }}
             />
+          </Modal>
+        </Dialog.Root>
+
+        <Dialog.Root open={aboutOpen} onOpenChange={setAboutOpen}>
+          <Modal title="Sobre" className="min-w-0 w-[300px]">
+            <About />
           </Modal>
         </Dialog.Root>
 

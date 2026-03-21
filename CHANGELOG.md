@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.12
+
+### Patch Changes
+
+- feat(About): add About dialog to settings dropdown menu with author info and app version
+
 ## 1.15.11
 
 ### Patch Changes
