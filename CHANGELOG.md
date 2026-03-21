@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.7
+
+### Patch Changes
+
+- fix(electron): resolve file paths correctly in packaged app — set DATABASE_URL to absolute path before PrismaClient initializes using process.resourcesPath; fix database export/import to use process.resourcesPath when packaged; move configs.json to app.getPath('userData') for guaranteed write access; pass BrowserWindow to dialogs so they display correctly; use VACUUM INTO for export to avoid SQLite file lock; disconnect Prisma before import
+
 ## 1.15.6
 
 ### Patch Changes
