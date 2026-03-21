@@ -1,5 +1,13 @@
 # ticket-manager
 
+## 1.15.9
+
+### Patch Changes
+
+- fix(Filter): add bg-zinc-800 rounded background to filter bar container
+
+  fix(ReactToPrint): change trigger Button variant from ghost to primary for better visibility
+
 ## 1.15.8
 
 ### Patch Changes
