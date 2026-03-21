@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.14
+
+### Patch Changes
+
+- fix(ReactToPrint): restore min-w-[50vw] on print dialog
+
 ## 1.15.13
 
 ### Patch Changes
