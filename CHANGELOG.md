@@ -1,5 +1,17 @@
 # ticket-manager
 
+## 1.15.6
+
+### Patch Changes
+
+- fix(TicketList): highlight active pagination page with filled purple — add active variant to Button (bg-purple-500 text-white) and use it for the current page instead of the danger/red variant
+
+## 1.15.5
+
+### Patch Changes
+
+- fix(TicketList): highlight active pagination page with filled purple — add active variant to Button (bg-purple-500 text-white) and use it for the current page instead of the danger/red variant; also show toast when edited ticket is saved
+
 ## 1.15.4
 
 ### Patch Changes

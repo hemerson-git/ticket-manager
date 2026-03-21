@@ -42,7 +42,7 @@ export function TicketList() {
                 <Button
                   key={index}
                   className="h-8 w-8 justify-center px-0 py-0"
-                  variant={page === index + 1 ? "danger" : "primary"}
+                  variant={page === index + 1 ? "active" : "primary"}
                   disabled={page === index + 1}
                   onClick={() => setPage(index + 1)}
                 >

@@ -1,19 +1,24 @@
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
+const { app } = require("electron");
 const { prisma } = require("../lib/prisma.cjs");
 const salt = bcrypt.genSaltSync(10);
 
-const configsPath = path.join(__dirname, "..", "..", "configs.json");
+const getConfigsPath = () => path.join(app.getPath("userData"), "configs.json");
 
 const getItemsPerPage = async () => {
+  const configsPath = getConfigsPath();
+  if (!fs.existsSync(configsPath)) return 20;
   const raw = fs.readFileSync(configsPath, "utf-8");
-  return JSON.parse(raw).items_per_page;
+  return JSON.parse(raw).items_per_page ?? 20;
 };
 
 const setItemsPerPage = async (event, items_per_page) => {
-  const raw = fs.readFileSync(configsPath, "utf-8");
-  const config = JSON.parse(raw);
+  const configsPath = getConfigsPath();
+  const config = fs.existsSync(configsPath)
+    ? JSON.parse(fs.readFileSync(configsPath, "utf-8"))
+    : {};
   config.items_per_page = Number(items_per_page);
   fs.writeFileSync(configsPath, JSON.stringify(config, null, 2));
   return true;

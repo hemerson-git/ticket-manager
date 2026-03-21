@@ -2,6 +2,12 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const isDev = require(`electron-is-dev`);
 
+// Set DATABASE_URL to absolute path before PrismaClient initializes
+const dbPath = app.isPackaged
+  ? path.join(process.resourcesPath, "prisma", "dev.db")
+  : path.join(__dirname, "..", "prisma", "dev.db");
+process.env.DATABASE_URL = `file:${dbPath}`;
+
 // Interfaces
 const ticket = require("./interfaces/ticket.cjs");
 const user = require("./interfaces/user.cjs");

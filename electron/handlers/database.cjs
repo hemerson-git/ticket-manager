@@ -1,27 +1,23 @@
-const { dialog } = require("electron");
+const { dialog, app } = require("electron");
 const path = require("path");
 const fs = require("fs");
+
+const getDbPath = () =>
+  app.isPackaged
+    ? path.join(process.resourcesPath, "prisma", "dev.db")
+    : path.join(__dirname, "..", "..", "prisma", "dev.db");
 
 const exportDatabase = async () => {
   try {
     const file = await dialog.showSaveDialog({
-      filters: [
-        {
-          name: "Database",
-          extensions: ["DB"],
-        },
-      ],
+      filters: [{ name: "Database", extensions: ["DB"] }],
       properties: ["showOverwriteConfirmation", "createDirectory"],
       buttonLabel: "Exportar",
     });
 
-    const database = path.join(__dirname, "..", "..", "prisma", "dev.db");
+    if (file.canceled) return;
 
-    fs.copyFile(database, file.filePath.toString(), (e) => {
-      console.log(e);
-    });
-
-    console.log(file);
+    await fs.promises.copyFile(getDbPath(), file.filePath.toString());
   } catch (e) {
     console.log("error: " + e.message);
   }
@@ -30,37 +26,23 @@ const exportDatabase = async () => {
 const importDatabase = async () => {
   try {
     const file = await dialog.showOpenDialog({
-      filters: [
-        {
-          name: "Database",
-          extensions: ["DB"],
-        },
-      ],
+      filters: [{ name: "Database", extensions: ["DB"] }],
       buttonLabel: "Importar",
       properties: ["openFile"],
     });
 
-    const databasePath = path.join(__dirname, "..", "..", "prisma");
+    if (file.canceled || file.filePaths.length === 0) return false;
 
-    if (!file.canceled && file.filePaths.length > 0) {
-      if (!fs.existsSync(databasePath)) {
-        await fs.promises.mkdir(databasePath);
-      }
+    const destPath = getDbPath();
+    const destDir = path.dirname(destPath);
 
-      await fs.promises.copyFile(
-        file.filePaths[0],
-        path.join(__dirname, "..", "..", "prisma", "dev.db"),
-        fs.promises.constants.COPYFILE_FICLONE,
-        (err) => {
-          if (err) {
-            console.log("Aconteceu algo errado: " + err.message);
-            return;
-          }
-        }
-      );
+    if (!fs.existsSync(destDir)) {
+      await fs.promises.mkdir(destDir, { recursive: true });
     }
 
-    console.log(`${file.filePaths[0]} copied to ${databasePath}`);
+    await fs.promises.copyFile(file.filePaths[0], destPath);
+
+    console.log(`${file.filePaths[0]} copied to ${destPath}`);
     return true;
   } catch (error) {
     console.log(error);
