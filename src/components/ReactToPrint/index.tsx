@@ -185,7 +185,7 @@ export function ReactToPrint({ tickets }: Props) {
         </Modal>
 
         <Dialog.Trigger asChild>
-          <Button variant="ghost">Imprimir <Printer /></Button>
+          <Button variant="primary">Imprimir <Printer /></Button>
         </Dialog.Trigger>
       </Dialog.Root>
     </div>

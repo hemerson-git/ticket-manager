@@ -14,10 +14,7 @@ function parseParams(params: URLSearchParams): FilterProps {
     document_number: params.get("document_number") || "",
     payment_place: params.get("payment_place") || "",
     type: (params.get("type") as FilterProps["type"]) || "all",
-    is_online:
-      isOnlineParam === null
-        ? undefined
-        : isOnlineParam === "on-line",
+    is_online: isOnlineParam === null ? undefined : isOnlineParam === "on-line",
     expiry_date: expiryDateParam ? new Date(expiryDateParam) : undefined,
     limite_expire_date: limiteExpireDateParam
       ? new Date(limiteExpireDateParam)
@@ -30,7 +27,7 @@ export function Filter() {
   const { setFilter, clearFilter } = useTickets();
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) {
     const { name, value } = e.target;
 
@@ -60,7 +57,7 @@ export function Filter() {
   const hasExpiry = !!searchParams.get("expiry_date");
 
   return (
-    <div className="flex items-center gap-3 px-3 py-2">
+    <div className="flex items-center gap-3 px-3 py-2 bg-zinc-800 rounded">
       <div className="flex flex-1 items-end gap-3">
         <Input
           name="recipient"
