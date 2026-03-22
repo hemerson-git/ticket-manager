@@ -59,61 +59,67 @@ export function ChangePassForm({ onSaved, onError }: Props) {
       onClick={toggleVisibility}
       type="button"
     >
-      {isPassVisible ? <EyeClosed size={14} /> : <Eye size={14} />}
+      {!isPassVisible ? <EyeClosed size={14} /> : <Eye size={14} />}
     </button>
   );
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-      <div className="relative">
-        <Controller
-          name="currentPass"
-          control={control}
-          render={({ field }) => (
-            <Input
-              id="currentPass"
-              label="Senha atual"
-              type={isPassVisible ? "text" : "password"}
-              error={errors?.currentPass?.message as string}
-              {...field}
-            />
-          )}
-        />
-        {eyeButton}
+      <div className="flex flex-col gap-1">
+        <label htmlFor="currentPass" className="text-sm font-semibold">Senha atual</label>
+        <div className="relative">
+          <Controller
+            name="currentPass"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="currentPass"
+                type={isPassVisible ? "text" : "password"}
+                error={errors?.currentPass?.message as string}
+                {...field}
+              />
+            )}
+          />
+          {eyeButton}
+        </div>
       </div>
 
-      <div className="relative">
-        <Controller
-          name="newPass"
-          control={control}
-          render={({ field }) => (
-            <Input
-              id="newPass"
-              label="Nova senha"
-              type={isPassVisible ? "text" : "password"}
-              error={errors?.newPass?.message as string}
-              {...field}
-            />
-          )}
-        />
-        {eyeButton}
+      <div className="flex flex-col gap-1">
+        <label htmlFor="newPass" className="text-sm font-semibold">Nova senha</label>
+        <div className="relative">
+          <Controller
+            name="newPass"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="newPass"
+                type={isPassVisible ? "text" : "password"}
+                error={errors?.newPass?.message as string}
+                {...field}
+              />
+            )}
+          />
+          {eyeButton}
+        </div>
       </div>
 
-      <div className="relative">
-        <Controller
-          name="confirmNewPass"
-          control={control}
-          render={({ field }) => (
-            <Input
-              id="confirmNewPass"
-              label="Confirmar nova senha"
-              type={isPassVisible ? "text" : "password"}
-              error={errors?.confirmDefaultPass?.message as string}
-              {...field}
-            />
-          )}
-        />
-        {eyeButton}
+      <div className="flex flex-col gap-1">
+        <label htmlFor="confirmNewPass" className="text-sm font-semibold">Confirmar nova senha</label>
+        <div className="relative">
+          <Controller
+            name="confirmNewPass"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="confirmNewPass"
+                type={isPassVisible ? "text" : "password"}
+                error={errors?.confirmDefaultPass?.message as string}
+                {...field}
+              />
+            )}
+          />
+          {eyeButton}
+        </div>
       </div>
 
       <footer className="flex justify-end gap-2 mt-2">

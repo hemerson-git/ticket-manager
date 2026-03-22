@@ -1,5 +1,17 @@
 # ticket-manager
 
+## 1.15.17
+
+### Patch Changes
+
+- fix(ChangePassForm): vertically center eye toggle button relative to input field
+
+## 1.15.16
+
+### Patch Changes
+
+- fix(Input): center checkboxes horizontally in table cells
+
 ## 1.15.15
 
 ### Patch Changes
