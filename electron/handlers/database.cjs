@@ -1,69 +1,64 @@
-const { dialog } = require("electron");
+const { dialog, app, BrowserWindow } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const { prisma } = require("../lib/prisma.cjs");
 
-const exportDatabase = async () => {
+const getDbPath = () =>
+  app.isPackaged
+    ? path.join(process.resourcesPath, "prisma", "dev.db")
+    : path.join(__dirname, "..", "..", "prisma", "dev.db");
+
+const exportDatabase = async (event) => {
   try {
-    const file = await dialog.showSaveDialog({
-      filters: [
-        {
-          name: "Database",
-          extensions: ["DB"],
-        },
-      ],
+    const win = BrowserWindow.fromWebContents(event.sender);
+
+    const file = await dialog.showSaveDialog(win, {
+      filters: [{ name: "Database", extensions: ["DB"] }],
       properties: ["showOverwriteConfirmation", "createDirectory"],
       buttonLabel: "Exportar",
     });
 
-    const database = path.join(__dirname, "..", "..", "prisma", "dev.db");
+    if (file.canceled || !file.filePath) return false;
 
-    fs.copyFile(database, file.filePath.toString(), (e) => {
-      console.log(e);
-    });
+    // Use VACUUM INTO to create a consistent backup of the live database
+    const destPath = file.filePath.toString().replace(/\\/g, "/");
+    await prisma.$executeRawUnsafe(`VACUUM INTO '${destPath.replace(/'/g, "''")}'`);
 
-    console.log(file);
+    return true;
   } catch (e) {
-    console.log("error: " + e.message);
+    console.log("exportDatabase error: " + e.message);
+    return false;
   }
 };
 
-const importDatabase = async () => {
+const importDatabase = async (event) => {
   try {
-    const file = await dialog.showOpenDialog({
-      filters: [
-        {
-          name: "Database",
-          extensions: ["DB"],
-        },
-      ],
+    const win = BrowserWindow.fromWebContents(event.sender);
+
+    const file = await dialog.showOpenDialog(win, {
+      filters: [{ name: "Database", extensions: ["DB"] }],
       buttonLabel: "Importar",
       properties: ["openFile"],
     });
 
-    const databasePath = path.join(__dirname, "..", "..", "prisma");
+    if (file.canceled || file.filePaths.length === 0) return false;
 
-    if (!file.canceled && file.filePaths.length > 0) {
-      if (!fs.existsSync(databasePath)) {
-        await fs.promises.mkdir(databasePath);
-      }
+    const destPath = getDbPath();
+    const destDir = path.dirname(destPath);
 
-      await fs.promises.copyFile(
-        file.filePaths[0],
-        path.join(__dirname, "..", "..", "prisma", "dev.db"),
-        fs.promises.constants.COPYFILE_FICLONE,
-        (err) => {
-          if (err) {
-            console.log("Aconteceu algo errado: " + err.message);
-            return;
-          }
-        }
-      );
+    if (!fs.existsSync(destDir)) {
+      await fs.promises.mkdir(destDir, { recursive: true });
     }
 
-    console.log(`${file.filePaths[0]} copied to ${databasePath}`);
+    // Disconnect Prisma before replacing the database file to avoid file lock
+    await prisma.$disconnect();
+
+    await fs.promises.copyFile(file.filePaths[0], destPath);
+
+    console.log(`${file.filePaths[0]} copied to ${destPath}`);
     return true;
   } catch (error) {
-    console.log(error);
+    console.log("importDatabase error: " + error.message);
     return false;
   }
 };

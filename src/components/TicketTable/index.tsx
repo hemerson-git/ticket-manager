@@ -32,6 +32,7 @@ export function TicketTable() {
 
   const [editModalData, setEditModalData] = useState<TicketProps | null>(null);
   const [isToastOpen, setIsToastOpen] = useState(false);
+  const [isSaveToastOpen, setIsSaveToastOpen] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -123,7 +124,7 @@ export function TicketTable() {
 
         <Dialog.Root
           open={Boolean(editModalData)}
-          onOpenChange={() => setEditModalData(null)}
+          onOpenChange={(open) => { if (!open) setEditModalData(null); }}
         >
           <tbody>
             {tickets.map((ticket, index) => {
@@ -147,8 +148,8 @@ export function TicketTable() {
                         </Table.button>
                       </AlertDialog.Trigger>
                       <AlertDialog.Portal>
-                        <AlertDialog.Overlay className="fixed inset-0 bg-black/50" />
-                        <AlertDialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] rounded-lg bg-zinc-800 p-6 shadow-xl">
+                        <AlertDialog.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+                        <AlertDialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] rounded-lg bg-zinc-800 p-6 shadow-xl text-zinc-100">
                           <AlertDialog.Title className="mb-2 text-lg font-bold">
                             Deletar boleto?
                           </AlertDialog.Title>
@@ -231,7 +232,12 @@ export function TicketTable() {
           </tbody>
 
           <Modal title="Editar Boleto">
-            {editModalData && <FormEditTicket ticket={editModalData} />}
+            {editModalData && (
+              <FormEditTicket
+                ticket={editModalData}
+                onSaved={() => setIsSaveToastOpen(true)}
+              />
+            )}
           </Modal>
         </Dialog.Root>
       </Table.wrapper>
@@ -241,6 +247,13 @@ export function TicketTable() {
         description="Texto Copiado para a área de transferência"
         isOpen={isToastOpen}
         onOpenChange={setIsToastOpen}
+      />
+
+      <Toast
+        title="Boleto atualizado!"
+        description="As alterações foram salvas com sucesso."
+        isOpen={isSaveToastOpen}
+        onOpenChange={setIsSaveToastOpen}
       />
     </>
   );

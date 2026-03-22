@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router-dom";
 import { useTickets } from "../../hooks/TicketContext";
 import type { FilterProps } from "../../contexts/TicketContext";
 import { Input } from "../Input";
+import { Button } from "../Button";
 
 function parseParams(params: URLSearchParams): FilterProps {
   const isOnlineParam = params.get("is_online");
@@ -11,11 +12,9 @@ function parseParams(params: URLSearchParams): FilterProps {
   return {
     recipient: params.get("recipient") || "",
     document_number: params.get("document_number") || "",
+    payment_place: params.get("payment_place") || "",
     type: (params.get("type") as FilterProps["type"]) || "all",
-    is_online:
-      isOnlineParam === null
-        ? undefined
-        : isOnlineParam === "on-line",
+    is_online: isOnlineParam === null ? undefined : isOnlineParam === "on-line",
     expiry_date: expiryDateParam ? new Date(expiryDateParam) : undefined,
     limite_expire_date: limiteExpireDateParam
       ? new Date(limiteExpireDateParam)
@@ -28,7 +27,7 @@ export function Filter() {
   const { setFilter, clearFilter } = useTickets();
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) {
     const { name, value } = e.target;
 
@@ -58,8 +57,8 @@ export function Filter() {
   const hasExpiry = !!searchParams.get("expiry_date");
 
   return (
-    <div className="flex items-center justify-between gap-3 px-3 py-2">
-      <div className="flex items-center gap-3 flex-wrap">
+    <div className="flex items-center gap-3 px-3 py-2 bg-zinc-800 rounded">
+      <div className="flex flex-1 items-end gap-3">
         <Input
           name="recipient"
           placeholder="Beneficiário"
@@ -73,6 +72,14 @@ export function Filter() {
           name="document_number"
           placeholder="Nº do documento"
           value={searchParams.get("document_number") || ""}
+          onChange={handleChange}
+          className="text-sm"
+        />
+
+        <Input
+          name="payment_place"
+          placeholder="Local de pagamento"
+          value={searchParams.get("payment_place") || ""}
           onChange={handleChange}
           className="text-sm"
         />
@@ -98,7 +105,7 @@ export function Filter() {
           name="is_online"
           value={searchParams.get("is_online") || ""}
           onChange={handleChange}
-          className="border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
+          className="flex-1 border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
         >
           <option value="">Todos</option>
           <option value="on-line">On-line</option>
@@ -109,7 +116,7 @@ export function Filter() {
           name="type"
           value={searchParams.get("type") || "all"}
           onChange={handleChange}
-          className="border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
+          className="flex-1 border-0 border-b-2 border-purple-500 bg-transparent px-2 py-1 text-sm text-zinc-100 outline-none [&>option]:bg-zinc-800 [&>option]:text-zinc-100"
         >
           <option value="all">Todos</option>
           <option value="paid">Pagos</option>
@@ -117,12 +124,9 @@ export function Filter() {
         </select>
       </div>
 
-      <button
-        onClick={handleClear}
-        className="text-sm text-zinc-400 hover:text-white transition-colors"
-      >
+      <Button variant="ghost" onClick={handleClear} className="text-sm">
         Limpar
-      </button>
+      </Button>
     </div>
   );
 }

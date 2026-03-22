@@ -19,8 +19,8 @@ export function Toast({ description, title, isOpen, onOpenChange }: Props) {
       <ToastPrimitive.Root
         open={isOpen}
         onOpenChange={onOpenChange}
-        className="data-[state='open']:animate-slideIn data-[state='closed']:animate-hide data-[state='end']:animate-slideOut 
-            bg-white/80 rounded-md text-zinc-900 px-3 py-2
+        className="data-[state='open']:animate-slideIn data-[state='closed']:animate-hide data-[state='end']:animate-slideOut
+            bg-zinc-900/60 backdrop-blur-sm rounded-md text-zinc-100 px-3 py-2
           "
       >
         <header className="flex justify-between">

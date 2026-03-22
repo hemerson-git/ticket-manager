@@ -1,41 +1,40 @@
+import { useEffect, useState } from "react";
 import { Input } from "../Input";
-
-import config from "../../../configs.json";
 import { Button } from "../Button";
+import { useTickets } from "../../hooks/TicketContext";
 
-export function Form() {
+type Props = {
+  onSaved?: () => void;
+};
+
+export function Form({ onSaved }: Props) {
+  const { setItemsPerPage } = useTickets();
+  const [itemsPerPage, setLocalItemsPerPage] = useState<number>(20);
+
+  useEffect(() => {
+    window.CONFIGS.GET_ITEMS_PER_PAGE().then(setLocalItemsPerPage);
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    await window.CONFIGS.SET_ITEMS_PER_PAGE(itemsPerPage);
+    setItemsPerPage(itemsPerPage);
+    onSaved?.();
+  }
+
   return (
-    <form>
-      <div className="flex gap-2">
-        <div className="flex flex-1 flex-col gap-2">
-          <label htmlFor="total_page" className="font-bold">
-            Items per page
-          </label>
+    <form onSubmit={handleSubmit}>
+      <Input
+        id="items_per_page"
+        label="Items per page"
+        type="number"
+        min={1}
+        value={itemsPerPage}
+        onChange={(e) => setLocalItemsPerPage(Number(e.target.value))}
+      />
 
-          <Input
-            id="total_page"
-            name="Total items per page"
-            defaultValue={config.items_per_page}
-            type="number"
-          />
-        </div>
-
-        {/* <div className="flex flex-1 flex-col gap-2">
-          <label htmlFor="total_page" className="font-bold">
-            Items per page
-          </label>
-
-          <Input
-            id="total_page"
-            name="Total items per page"
-            defaultValue={config.items_per_page}
-            type="number"
-          />
-        </div> */}
-      </div>
-
-      <footer className="flex items-center justify-center mt-10">
-        <Button>Save</Button>
+      <footer className="flex items-center justify-center mt-6">
+        <Button type="submit">Save</Button>
       </footer>
     </form>
   );

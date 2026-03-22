@@ -2,6 +2,12 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const isDev = require(`electron-is-dev`);
 
+// Set DATABASE_URL to absolute path before PrismaClient initializes
+const dbPath = app.isPackaged
+  ? path.join(process.resourcesPath, "prisma", "dev.db")
+  : path.join(__dirname, "..", "prisma", "dev.db");
+process.env.DATABASE_URL = `file:${dbPath}`;
+
 // Interfaces
 const ticket = require("./interfaces/ticket.cjs");
 const user = require("./interfaces/user.cjs");
@@ -26,6 +32,8 @@ const {
   comparePass,
   hasDefaultPass,
   changePass,
+  getItemsPerPage,
+  setItemsPerPage,
 } = require("./handlers/configs.cjs");
 
 if (process.defaultApp) {
@@ -124,3 +132,5 @@ ipcMain.handle(configs.setDefaultPass, (event, data) => setDefaultPass(event, da
 ipcMain.handle(configs.comparePass, (event, data) => comparePass(event, data));
 ipcMain.handle(configs.hasDefaultPass, (event, data) => hasDefaultPass(event, data));
 ipcMain.handle(configs.changePass, (event, data) => changePass(event, data));
+ipcMain.handle(configs.getItemsPerPage, () => getItemsPerPage());
+ipcMain.handle(configs.setItemsPerPage, (event, data) => setItemsPerPage(event, data));

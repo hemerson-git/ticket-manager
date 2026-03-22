@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Input } from "../Input";
+import { Button } from "../Button";
 import { useUserContext } from "../../hooks/UserContext";
 import { useTickets } from "../../hooks/TicketContext";
 
@@ -116,13 +117,9 @@ export function FormNewTicket() {
       </div>
 
       <footer className="mt-10 flex items-center justify-center">
-        <button
-          type="submit"
-          className="flex items-center gap-2 rounded-sm border border-purple-400 px-4 py-1 
-              transition-colors hover:bg-purple-500 hover:text-white"
-        >
+        <Button type="submit">
           Salvar Boleto
-        </button>
+        </Button>
       </footer>
     </form>
   );

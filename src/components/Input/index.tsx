@@ -8,9 +8,11 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export function Input({ label, id, mask, error, ...rest }: Props) {
+  const isCheckbox = rest.type === "checkbox";
+
   return (
-    <div className="flex w-full flex-1 flex-col items-start gap-1">
-      {label && (
+    <div className={`flex w-full flex-1 items-start gap-1 ${isCheckbox ? "flex-row items-center" : "flex-col"}`}>
+      {label && !isCheckbox && (
         <label
           htmlFor={id}
           className="inline-flex select-none whitespace-nowrap text-sm font-semibold"
@@ -21,7 +23,7 @@ export function Input({ label, id, mask, error, ...rest }: Props) {
 
       <div
         className={`relative flex flex-col ${
-          rest.type !== "checkbox" ? "w-full flex-1" : "h-4 w-4 self-center p-0"
+          !isCheckbox ? "w-full flex-1" : "h-4 w-4 shrink-0 p-0"
         }`}
       >
         {mask ? (
@@ -37,18 +39,29 @@ export function Input({ label, id, mask, error, ...rest }: Props) {
           <input
             id={id}
             {...rest}
-            className={`border-0 border-b-2 border-purple-500 bg-transparent py-1 text-zinc-100 focus:outline-0 ${
-              rest.type === "checkbox" ? "checked:text-purple-500" : "px-2"
+            className={`bg-transparent text-zinc-100 focus:outline-0 ${
+              rest.type === "checkbox"
+                ? "h-4 w-4 cursor-pointer rounded-sm border-2 border-purple-500 checked:bg-purple-500 checked:border-purple-500"
+                : "border-0 border-b-2 border-purple-500 px-2 py-1"
             } ${error ? "border-b-red-400" : ""} ${rest.className ?? ""}`}
           />
         )}
 
         {error && (
-          <span className="absolute right-0 top-full -translate-y-1/2 text-xs text-red-500">
-            {error}!
+          <span className="mt-1 text-xs text-red-500">
+            {error}
           </span>
         )}
       </div>
+
+      {label && isCheckbox && (
+        <label
+          htmlFor={id}
+          className="inline-flex select-none whitespace-nowrap text-sm font-semibold"
+        >
+          {label}
+        </label>
+      )}
     </div>
   );
 }

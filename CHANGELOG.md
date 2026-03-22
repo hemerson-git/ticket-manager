@@ -1,5 +1,140 @@
 # ticket-manager
 
+## 1.15.18
+
+### Patch Changes
+
+- fix(pagination): show windowed page buttons with first/last/search controls; fix icon visibility with !px-0 !py-0 override; add disabled styles to Button
+
+## 1.15.17
+
+### Patch Changes
+
+- fix(ChangePassForm): vertically center eye toggle button relative to input field
+
+## 1.15.16
+
+### Patch Changes
+
+- fix(Input): center checkboxes horizontally in table cells
+
+## 1.15.15
+
+### Patch Changes
+
+- fix(auth): call signIn before navigating to home so user component renders immediately; fix signOut to redirect to DefaultPass screen
+
+## 1.15.14
+
+### Patch Changes
+
+- fix(ReactToPrint): restore min-w-[50vw] on print dialog
+
+## 1.15.13
+
+### Patch Changes
+
+- fix(Modal): replace min-w-[50vw] with min-w-[200px] to allow narrower dialogs; set config dialogs to w-[300px]
+
+## 1.15.12
+
+### Patch Changes
+
+- feat(About): add About dialog to settings dropdown menu with author info and app version
+
+## 1.15.11
+
+### Patch Changes
+
+- fix(Input): display error message below input instead of overlapping border
+
+  Also replace change password page navigation with a dialog opened from the settings dropdown menu.
+
+## 1.15.10
+
+### Patch Changes
+
+- fix(Home): defer settings dialog open to resolve focus trap after DropdownMenu closes
+
+  Replace settings gear button with DropdownMenu containing "Configurações" and "Alterar Senha" items. Use setTimeout deferral when opening the settings Dialog from DropdownMenu.Item so Radix DismissableLayer fully cleans up before the dialog mounts, preventing focus trap that blocked all UI interaction.
+
+## 1.15.9
+
+### Patch Changes
+
+- fix(Filter): add bg-zinc-800 rounded background to filter bar container
+
+  fix(ReactToPrint): change trigger Button variant from ghost to primary for better visibility
+
+## 1.15.8
+
+### Patch Changes
+
+- fix(Modal): increase padding from p-4 pb-2 to p-6 so content doesn't sit tight against borders; feat(Home): require password before export/import database — show password dialog, verify via COMPARE_PASS before calling IPC; fix(vite): restore HMR by scoping base:./ to production builds only and enable usePolling for WSL2 compatibility
+
+## 1.15.7
+
+### Patch Changes
+
+- fix(electron): resolve file paths correctly in packaged app — set DATABASE_URL to absolute path before PrismaClient initializes using process.resourcesPath; fix database export/import to use process.resourcesPath when packaged; move configs.json to app.getPath('userData') for guaranteed write access; pass BrowserWindow to dialogs so they display correctly; use VACUUM INTO for export to avoid SQLite file lock; disconnect Prisma before import
+
+## 1.15.6
+
+### Patch Changes
+
+- fix(TicketList): highlight active pagination page with filled purple — add active variant to Button (bg-purple-500 text-white) and use it for the current page instead of the danger/red variant
+
+## 1.15.5
+
+### Patch Changes
+
+- fix(TicketList): highlight active pagination page with filled purple — add active variant to Button (bg-purple-500 text-white) and use it for the current page instead of the danger/red variant; also show toast when edited ticket is saved
+
+## 1.15.4
+
+### Patch Changes
+
+- fix(FormEditTicket): use Controller for checkboxes to fix value not saving — register() without forwardRef can't sync checked state via ref; Controller with explicit checked/onChange binding ensures is_paid and is_online are properly submitted; also replace raw submit button with Button component
+- fix(Input): align checkbox and label horizontally — checkboxes now use flex-row items-center so the label sits beside the input instead of stacking above it
+
+## 1.15.3
+
+### Patch Changes
+
+- fix(Toast): dark background with blur and low opacity (bg-zinc-900/60 backdrop-blur-sm) to match app visual style
+
+## 1.15.2
+
+### Patch Changes
+
+- refactor(buttons): replace all raw button elements with Button component across Filter, FormNewTicket, ReactToPrint, TicketList pagination, and SignIn; add ghost variant for borderless utility actions
+
+## 1.15.1
+
+### Patch Changes
+
+- fix(Modal, ReactToPrint): constrain modal to max-h-[90vh] with flex-col so header and footer are always visible; print content area scrolls independently with flex-1 overflow-y-auto
+
+## 1.15.0
+
+### Minor Changes
+
+- feat(Filter): add payment_place filter field to the filter bar
+
+  feat(Settings): wire items-per-page IPC round-trip — getItemsPerPage/setItemsPerPage handlers read/write configs.json; TicketContext loads the value on mount and passes it as page size so the list respects the setting; saving reloads the ticket list and shows a toast confirmation
+
+### Patch Changes
+
+- fix(Input): show only bottom border (border-b-2) instead of full border; checkboxes show full border with purple fill when checked
+
+  fix(Filter): style selects to match Input underline pattern; filter inputs fill available width equally
+
+  fix(TicketTable): edit dialog not opening on pencil click — onOpenChange now only clears data when dialog closes, not on open
+
+  fix(Modal, AlertDialog): add dark background with opacity and blur (bg-black/60 backdrop-blur-sm) to overlays
+
+  fix(Home): settings modal max width reduced; render toast outside modal to fix viewport stacking context positioning; wrap HomeHeader return in fragment for adjacent JSX
+
 ## 1.14.3
 
 ### Patch Changes

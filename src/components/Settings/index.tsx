@@ -1,12 +1,9 @@
-import { Link } from "react-router-dom";
 import { Form } from "./Form";
 
-export function Settings() {
-  return (
-    <div>
-      <Link to="/change-pass">Change Password</Link>
+type Props = {
+  onSaved?: () => void;
+};
 
-      <Form />
-    </div>
-  );
+export function Settings({ onSaved }: Props) {
+  return <Form onSaved={onSaved} />;
 }

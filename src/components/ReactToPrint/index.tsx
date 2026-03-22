@@ -4,6 +4,7 @@ import { useReactToPrint } from "react-to-print";
 import { Printer } from "phosphor-react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Modal } from "../Modal";
+import { Button } from "../Button";
 
 type Props = {
   tickets: TicketProps[];
@@ -38,10 +39,10 @@ export function ReactToPrint({ tickets }: Props) {
   return (
     <div>
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-        <Modal title="Imprimir Boleto" className="overflow-y-auto">
+        <Modal title="Imprimir Boleto" className="min-w-[50vw] w-1/2">
           <>
             <div
-              className={`flex min-h-[calc(100vh_-_200px)] w-full flex-col items-center p-4 scroll-auto`}
+              className="flex flex-1 overflow-y-auto w-full flex-col items-center p-4"
               ref={contentRef}
             >
               <table className="w-[85%] border border-zinc-900" border={1}>
@@ -178,19 +179,13 @@ export function ReactToPrint({ tickets }: Props) {
             </div>
 
             <footer className="flex items-center justify-end px-4">
-              <button
-                onClick={handlePrint}
-                className="flex items-center gap-2 rounded-sm border border-purple-400 px-4 py-1 text-purple-500 
-                  transition-colors hover:bg-purple-500 hover:text-white"
-              >
-                Imprimir
-              </button>
+              <Button onClick={handlePrint}>Imprimir</Button>
             </footer>
           </>
         </Modal>
 
-        <Dialog.Trigger className="flex items-center gap-2">
-          Imprimir <Printer />
+        <Dialog.Trigger asChild>
+          <Button variant="primary">Imprimir <Printer /></Button>
         </Dialog.Trigger>
       </Dialog.Root>
     </div>
