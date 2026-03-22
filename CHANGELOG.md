@@ -1,5 +1,11 @@
 # ticket-manager
 
+## 1.15.18
+
+### Patch Changes
+
+- fix(pagination): show windowed page buttons with first/last/search controls; fix icon visibility with !px-0 !py-0 override; add disabled styles to Button
+
 ## 1.15.17
 
 ### Patch Changes
